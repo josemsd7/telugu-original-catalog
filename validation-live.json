@@ -1,9 +1,9 @@
 {
-  "version": "1.1.0",
+  "version": "1.1.1",
   "releaseTimeZone": "Asia/Kolkata",
-  "checkedAt": "2026-10-30T03:58:08.328Z",
+  "checkedAt": "2026-10-30T05:32:13.302Z",
   "stale": false,
-  "verifiedMovieCount": 662,
+  "verifiedMovieCount": 685,
   "datePolicy": "earliest_reported_telugu_ott_date",
   "coverageWindowStart": null,
   "sources": [
@@ -18,7 +18,7 @@
       "pagesFetched": 1,
       "pagesAvailable": 1,
       "errors": [],
-      "movieCount": 31
+      "movieCount": 32
     },
     {
       "key": "trendraja",
@@ -31,7 +31,7 @@
       "pagesFetched": 1,
       "pagesAvailable": 1,
       "errors": [],
-      "movieCount": 596
+      "movieCount": 616
     },
     {
       "key": "sacnilk",
@@ -44,7 +44,7 @@
       "pagesFetched": 25,
       "pagesAvailable": 25,
       "errors": [],
-      "movieCount": 71
+      "movieCount": 74
     },
     {
       "key": "123telugu",
@@ -131,17 +131,17 @@
         "Pagination unavailable: HTTP 403",
         "Pagination capped at the newest 40 pages; older archives are outside the scanned pages."
       ],
-      "movieCount": 424
+      "movieCount": 442
     }
   ],
   "platformCounts": {
-    "Prime Video": 266,
-    "Netflix": 87,
-    "ETV Win": 69,
-    "Aha": 208,
+    "Prime Video": 273,
+    "Netflix": 93,
+    "ETV Win": 74,
+    "Aha": 213,
     "Sun NXT": 35,
-    "ZEE5": 38,
-    "JioHotstar": 63,
+    "ZEE5": 41,
+    "JioHotstar": 65,
     "SonyLIV": 11,
     "Lionsgate Play": 5,
     "JioCinema": 1,
@@ -154,32 +154,24 @@
     "non_indian_language": 15,
     "missing_ott_date": 363,
     "upcoming": 4,
-    "no_matching_movie_id": 190,
-    "older_film_relisted_as_new": 112,
-    "movie_lookup_failed": 3,
-    "not_original_telugu": 330,
-    "cast_mismatch": 44,
-    "original_language_unconfirmed": 45,
-    "non_indian_film": 73,
-    "title_variant_uncorroborated": 2,
+    "no_matching_movie_id": 166,
+    "older_film_relisted_as_new": 108,
+    "not_original_telugu": 344,
+    "cast_mismatch": 39,
+    "original_language_unconfirmed": 41,
+    "non_indian_film": 75,
+    "title_variant_uncorroborated": 4,
     "country_conflict": 22,
-    "title_mismatch": 23,
     "original_language_conflict": 7,
-    "identity_conflict": 3,
+    "identity_conflict": 5,
     "ambiguous_movie_match": 2,
     "ambiguous_identity": 2,
-    "original_language_identity_conflict": 2
+    "original_language_identity_conflict": 2,
+    "superseded_ott_announcement": 1
   },
   "refreshWarnings": [
-    "Oh Bhama Ayyo Rama: Cached lookup failure: Metadata HTTP 504",
-    "Jinn - The Pet (Telugu): Cached lookup failure: Metadata HTTP 504",
-    "Oh Bhama Ayyo Rama: Cached lookup failure: Metadata HTTP 504",
-    "Cached lookup failure: tt15310668: Metadata HTTP 504",
-    "Cached lookup failure: tt15263698: The operation was aborted due to timeout",
-    "Cached lookup failure: tt9760426: The operation was aborted due to timeout",
-    "Cached lookup failure: tt13262002: Metadata HTTP 504",
-    "TMDB 1157265: Unrecognized original language",
     "TMDB 1569956: Unrecognized original language",
+    "TMDB 1157265: Unrecognized original language",
     "TMDB 1291787: Unrecognized original language",
     "TMDB 1291785: Unrecognized original language"
   ],
@@ -192,7 +184,8 @@
     "A failed source uses its last successful recent snapshot while other sources update. If all release sources fail, publication stops and the previous deployment is preserved.",
     "SV Telugu OTT returned HTTP 403 to automated requests during validation and is not an active source. Combined coverage is not a guarantee of every platform or every Telugu original."
   ],
-  "durationSeconds": 25.284,
+  "coverageAudit": "2026-10-30T05:33:50.064Z",
+  "addedMovieCount": 23,
   "examples": [
     {
       "id": "tt32089596",

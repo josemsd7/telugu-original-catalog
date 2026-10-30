@@ -28,3 +28,15 @@ export function confirmedIdentity(row,meta) {
   return film;
 }
 
+// An announced date must not win the earliest-date merge after a documented
+// postponement. Bind exceptions to the exact film, year, platform and old date.
+const supersededReleases=[{
+  id:'tt37803848',year:'2026',platform:'ETV Win',announcedDate:'2026-02-19',actualDate:'2026-02-26',
+  sourceName:'123telugu — confirmed streaming availability',
+  sourceUrl:'https://www.123telugu.com/mnews/sri-chidambaram-garu-is-now-streaming-on-ott-where-to-watch-avd.html',
+  postponementSourceUrl:'https://www.filmibeat.com/telugu/news/2026/sri-chidambaram-garu-ott-release-date-platform-when-where-to-watch-vamsi-tummala-film-online-503763.html',
+}];
+export function supersededRelease(row,meta){
+  return supersededReleases.find(x=>meta.id===x.id&&meta.year===x.year&&row.ottReleaseDate===x.announcedDate&&row.platforms?.length===1&&row.platforms.includes(x.platform));
+}
+

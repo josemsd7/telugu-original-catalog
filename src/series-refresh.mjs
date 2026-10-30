@@ -1,13 +1,13 @@
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {VERSION,LANGUAGES,normalize,parallelMap,wikiQuery,wikiRecords,releaseDate,newestFirst} from './identity.mjs';
-import {parseSource,titleScore,assessFilm,languageHint} from './source-refresh.mjs';
+import {parseSource,titleScore,metadataTitleScore,assessFilm,languageHint} from './source-refresh.mjs';
 import {discoverSources,SOURCES} from './discovery.mjs';
 import {discover91,NINETYONE} from './ninetyone.mjs';
 import {newestSeriesFirst,SERIES_DATE_POLICY} from './series-order.mjs';
 import {enrichProviderRows} from './provider-facts.mjs';
 import {indiaDate,RELEASE_TIME_ZONE} from './release-time.mjs';
-import {imdbTitleSearch,SEARCH_SCHEMA,titleAliases} from './title-search.mjs';
+import {imdbTitleSearch,SEARCH_SCHEMA,titleAliases,withTitleAliases} from './title-search.mjs';
 import {discoverOfficial,OFFICIAL_SOURCES,classifyReleaseRows} from './official-sources.mjs';
 
 export const SERIES_SOURCES=[...SOURCES.filter(x=>x.key!=='sacnilk'),{key:'sacnilk-series',name:'Sacnilk',url:'https://www.sacnilk.com/entertainmenttopbar/Recent_WebSeries'},NINETYONE,...OFFICIAL_SOURCES];
@@ -136,12 +136,13 @@ export async function refreshSeries(previous={},options={}){
     })());return searchPromises.get(key);
   }
   async function meta(hit){
-    if(metas[hit.id]?.schemaVersion===5&&fresh(metas[hit.id],now,SIX_HOURS))return metas[hit.id];
+    const remember=value=>{const result=withTitleAliases({...value,aliases:[...(value.aliases||[]),...(metas[hit.id]?.aliases||[])]},hit);metas[hit.id]=result;return result;};
+    if(metas[hit.id]?.schemaVersion===5&&fresh(metas[hit.id],now,SIX_HOURS))return remember(metas[hit.id]);
     if(!metaPromises.has(hit.id))metaPromises.set(hit.id,(async()=>{
       const d=await (await get(`https://v3-cinemeta.strem.io/meta/series/${hit.id}.json`,fetcher)).json();
       if(d.meta?.id!==hit.id||d.meta.type!=='series')throw new Error('Invalid series identity');
       metas[hit.id]=compactMeta({...hit,...d.meta,name:d.meta.name||hit.name,year:d.meta.year||hit.year,releaseInfo:d.meta.releaseInfo||hit.year,poster:d.meta.poster||hit.poster,cast:d.meta.cast?.length?d.meta.cast:hit.cast||[]},checkedAt,today);return metas[hit.id];
-    })());return metaPromises.get(hit.id);
+    })());return remember(await metaPromises.get(hit.id));
   }
   let done=0;
   const groups=(await parallelMap(eligible,4,async row=>{
@@ -152,7 +153,7 @@ export async function refreshSeries(previous={},options={}){
         if(m.countries.length&&!m.countries.includes('india'))continue;
         const season=seriesSeason(row);if(season&&!m.seasons.includes(season)){seasonRejected=true;continue;}
         const cast=normalize(row.castText),castMatches=m.cast.filter(x=>normalize(x).length>=4&&cast.includes(normalize(x))).length;
-        const score=titleScore(cleanSeriesTitle(row.title),m.name);matches.push({row,meta:m,titleScore:score,castMatches,score:score+15*Math.min(4,castMatches)});
+        const score=metadataTitleScore(cleanSeriesTitle(row.title),m);matches.push({row,meta:m,titleScore:score,castMatches,score:score+15*Math.min(4,castMatches)});
       }
       matches.sort((a,b)=>b.score-a.score);
       if(!matches.length){reject(row,seasonRejected?'season_unconfirmed':'no_matching_series_id');return null;}

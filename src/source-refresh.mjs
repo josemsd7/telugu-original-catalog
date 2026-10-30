@@ -2,10 +2,10 @@ import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {VERSION,LANGUAGES,normalize,parallelMap,wikiQuery,wikiRecords,releaseDate,newestFirst} from './identity.mjs';
 import {discoverSources,SOURCE_URL,SOURCE_NAME,SOURCES} from './discovery.mjs';
-import {confirmedRelease,confirmedIdentity} from './confirmed-films.mjs';
+import {confirmedRelease,confirmedIdentity,supersededRelease} from './confirmed-films.mjs';
 import {enrichProviderRows} from './provider-facts.mjs';
 import {indiaDate,RELEASE_TIME_ZONE} from './release-time.mjs';
-import {titleAliases,imdbTitleSearch,SEARCH_SCHEMA} from './title-search.mjs';
+import {titleAliases,imdbTitleSearch,SEARCH_SCHEMA,withTitleAliases} from './title-search.mjs';
 import {discoverOfficial,OFFICIAL_SOURCES,classifyReleaseRows} from './official-sources.mjs';
 import {discover91Movies,NINETYONE_MOVIES} from './movie-discovery.mjs';
 
@@ -36,8 +36,9 @@ const titleVariants=value=>{
   return [...new Set([...titleAliases(main),...aliases,...titleAliases(full)].filter(Boolean))];
 };
 export function titleScore(source,title) {
-  if(titleVariants(source).some(x=>titleKey(x)===titleKey(title)))return 100;
-  if(titleVariants(source).some(x=>phonetic(x)===phonetic(title)))return 90;
+  const sourceVariants=titleVariants(source),targetVariants=titleVariants(title);
+  if(sourceVariants.some(x=>targetVariants.some(y=>titleKey(x)===titleKey(y))))return 100;
+  if(sourceVariants.some(x=>targetVariants.some(y=>phonetic(x)===phonetic(y))))return 90;
   const prefix=titleVariants(source).filter(x=>titleKey(x).length>=6);
   if(prefix.some(a=>titleVariants(title).some(b=>titleKey(a)===titleKey(b))))return 80;
   const a=titleKey(source),b=titleKey(title);
@@ -46,8 +47,13 @@ export function titleScore(source,title) {
     for(let i=1;i<=a.length;i++){const next=[i];for(let j=1;j<=b.length;j++)next[j]=Math.min(next[j-1]+1,prior[j]+1,prior[j-1]+(a[i-1]===b[j-1]?0:1));prior=next;}
     if(prior[b.length]<=2)return 75;
   }
+  // Long transliterations can differ in several vowels (Seetharamuni versus
+  // Sita Raamuni). These weak matches still need cast or source-year evidence.
+  const consonants=value=>phonetic(value).replace(/[aeiou]/g,'');
+  if(sourceVariants.some(x=>targetVariants.some(y=>consonants(x).length>=10&&consonants(x)===consonants(y))))return 70;
   return 0;
 }
+export const metadataTitleScore=(title,meta)=>Math.max(0,...[meta.name,...(meta.aliases||[])].filter(Boolean).map(name=>titleScore(title,name)));
 
 export function sourceReason(row,today) {
   if(!row.ottReleaseDate)return 'missing_ott_date';
@@ -98,7 +104,7 @@ export function assessFilm(row,match,identity,facts) {
   const confirmed=confirmedIdentity(row,meta);
   if(confirmed?.ignoredTmdbId&&confirmed.ignoredTmdbId===meta.tmdbId)facts=undefined;
   if(identity?.items.length>1)return {reason:'ambiguous_identity'};
-  if(facts&&!matchingPageTitle(meta.name,facts.title))return {reason:'original_language_identity_conflict'};
+  if(facts&&![meta.name,...(meta.aliases||[])].some(name=>matchingPageTitle(name,facts.title)))return {reason:'original_language_identity_conflict'};
   const countries=meta.countries||[];
   if(countries.length&&!countries.includes('india'))return {reason:'non_indian_film'};
   if(identity?.countries.length&&!identity.countries.includes('Q668'))return {reason:'country_conflict'};
@@ -162,11 +168,13 @@ export async function refreshFromOtt(previous={},options={}) {
     if(/^tt\d+$/.test(label))failedMetadata.set(label,message);else failedSearches.set(titleKey(label),message);
   }
   const searchPromises=new Map(),metaPromises=new Map(),confirmedProofs=new Map();
+  const recoverKeys=new Set((previous.audit||[]).filter(x=>x.ottReleaseDate>=String(Number(today.slice(0,4))-1)+'-01-01'&&['no_matching_movie_id','title_mismatch','cast_mismatch','older_film_relisted_as_new','original_language_unconfirmed'].includes(x.reason)).map(x=>titleKey(x.title)));
   async function search(row) {
     const key=titleKey(row.title),cached=searchCache[key];
+    const recover=recoverKeys.has(key)&&cached?.recoveryVersion!==1;
     const relevant=hit=>!hit.year||(Number(hit.year)<=Number(row.ottReleaseDate.slice(0,4))&&Number(hit.year)>=Number(row.ottReleaseDate.slice(0,4))-1);
     const promiseKey=key+'|'+row.ottReleaseDate.slice(0,4);
-    if(cached?.schemaVersion===SEARCH_SCHEMA&&stamp(cached,now,cached?.hits.some(relevant)?WEEK:SIX_HOURS)){
+    if(!recover&&cached?.schemaVersion===SEARCH_SCHEMA&&stamp(cached,now,cached?.hits.some(relevant)?WEEK:SIX_HOURS)){
       const hits=cached.hits.filter(x=>titleScore(row.title,x.name)>0&&relevant(x)).slice(0,8);
       if(hits.length||cached.hits.length===0)return hits;
       if(cached.checkedYear===row.ottReleaseDate.slice(0,4))return cached.hits.filter(x=>titleScore(row.title,x.name)>0).slice(0,8);
@@ -183,16 +191,18 @@ export async function refreshFromOtt(previous={},options={}) {
         hits=[...new Map([...hits,...found].map(x=>[x.id,x])).values()];
         if(hits.some(relevant))break;
       }
-      if(!hits.some(relevant))try{hits=[...new Map([...hits,...(await imdbTitleSearch(row.title,'movie',fetcher,hit=>titleScore(row.title,hit.name)>0&&relevant(hit))).filter(x=>titleScore(row.title,x.name)>0)].map(x=>[x.id,x])).values()];}catch(e){warnings.push('IMDb title search: '+row.title+': '+e.message);}
-      searchCache[key]={hits:[...new Map([...hits.filter(relevant),...(cached?.hits||[]),...hits].map(x=>[x.id,x])).values()].slice(0,20),checkedAt,schemaVersion:SEARCH_SCHEMA,checkedYear:row.ottReleaseDate.slice(0,4)};return [...hits.filter(relevant),...hits.filter(x=>!relevant(x))].slice(0,8);
+      if(recover||!hits.some(relevant))try{hits=[...new Map([...hits,...(await imdbTitleSearch(row.title,'movie',fetcher,hit=>titleScore(row.title,hit.name)>0&&relevant(hit))).filter(x=>titleScore(row.title,x.name)>0)].map(x=>[x.id,x])).values()];}catch(e){warnings.push('IMDb title search: '+row.title+': '+e.message);}
+      const merged=[...new Map([...(cached?.hits||[]),...hits].map(x=>[x.id,x])).values()];
+      searchCache[key]={hits:[...merged.filter(relevant),...merged.filter(x=>!relevant(x))].slice(0,20),checkedAt,schemaVersion:SEARCH_SCHEMA,checkedYear:row.ottReleaseDate.slice(0,4),recoveryVersion:recover?1:cached?.recoveryVersion};return [...hits.filter(relevant),...hits.filter(x=>!relevant(x))].slice(0,8);
     })());
     return searchPromises.get(promiseKey);
   }
   async function getMeta(hit) {
-    const cached=metaCache[hit.id];if(stamp(cached,now,WEEK))return {...cached,name:cached.name||hit.name,year:cached.year||hit.year,poster:hit.identitySource==='IMDb public title suggestions'?(hit.poster||cached.poster):(cached.poster||hit.poster),cast:cached.cast?.length?cached.cast:hit.cast||[]};
+    const remember=value=>{const result=withTitleAliases({...value,year:hit.identitySource==='IMDb public title suggestions'&&hit.year?hit.year:value.year,cast:[...new Set([...(value.cast||[]),...(hit.cast||[])])],aliases:[...(value.aliases||[]),...(metaCache[hit.id]?.aliases||[])]},hit);metaCache[hit.id]=result;return result;};
+    const cached=metaCache[hit.id];if(stamp(cached,now,WEEK))return remember({...cached,name:cached.name||hit.name,year:cached.year||hit.year,poster:hit.identitySource==='IMDb public title suggestions'?(hit.poster||cached.poster):(cached.poster||hit.poster),cast:cached.cast?.length?cached.cast:hit.cast||[]});
     if(failedMetadata.has(hit.id)){
       warnings.push(`Cached lookup failure: ${hit.id}: ${failedMetadata.get(hit.id)}`);
-      return cached||{...hit,type:'movie',countries:[],cast:[],directors:[],released:null};
+      return remember(cached||{...hit,type:'movie',countries:[],cast:[],directors:[],released:null});
     }
     if(!metaPromises.has(hit.id))metaPromises.set(hit.id,(async()=>{
       try{
@@ -204,7 +214,7 @@ export async function refreshFromOtt(previous={},options={}) {
         return cached||{...hit,type:'movie',countries:[],cast:[],directors:[],released:null};
       }
     })());
-    return metaPromises.get(hit.id);
+    return remember(await metaPromises.get(hit.id));
   }
   let done=0;
   const groups=(await parallelMap(eligible,4,async row=>{
@@ -225,7 +235,8 @@ export async function refreshFromOtt(previous={},options={}) {
         if(meta.type!=='movie'||(meta.year&&Number(meta.year)>Number(row.ottReleaseDate.slice(0,4)))||(row.movieYearHint&&meta.year&&row.movieYearHint!==meta.year))continue;
         if(meta.year&&Number(row.ottReleaseDate.slice(0,4))-Number(meta.year)>1){staleListing=true;continue;}
         const castText=normalize(row.castText),castMatches=[...(meta.cast||[]),...(meta.directors||[])].filter(x=>normalize(x).length>=4&&castText.includes(normalize(x))).length;
-        matches.push({row,meta,titleScore:titleScore(row.title,meta.name),castMatches,score:titleScore(row.title,meta.name)+Math.min(castMatches,4)*15});
+        const score=metadataTitleScore(row.title,meta);
+        matches.push({row,meta,titleScore:score,castMatches,score:score+Math.min(castMatches,4)*15});
       }
       matches.sort((a,b)=>b.score-a.score);
       if(!matches.length){record(row,staleListing?'older_film_relisted_as_new':'no_matching_movie_id');return null;}
@@ -272,10 +283,12 @@ export async function refreshFromOtt(previous={},options={}) {
     if(valid[1]?.score===valid[0].score){record(matches[0].row,'ambiguous_movie_match');continue;}
     selected.push(valid[0]);
   }
-  const byId=new Map();let acceptedListingCount=0;
+  const byId=new Map(),dateCorrections=new Map();let acceptedListingCount=0;
   for(const match of selected){
     const {row,meta}=match,assessment=assessFilm(row,match,identities[meta.id],originalCache[meta.tmdbId]);
     if(assessment.reason){record(row,assessment.reason);continue;}
+    const superseded=supersededRelease(row,meta);
+    if(superseded){record(row,'superseded_ott_announcement');dateCorrections.set(meta.id,{...superseded,supersededListingUrl:row.sourceUrl});continue;}
     acceptedListingCount++;
     const languages=assessment.originalLanguages.map(x=>LANGUAGES[x]||'Other');
     const correction=confirmedIdentity(row,meta);
@@ -296,6 +309,8 @@ export async function refreshFromOtt(previous={},options={}) {
       links:[{name:'OTT release source',category:'Source',url:row.sourceUrl},...(assessment.originalSourceUrl?[{name:'Original language',category:'Source',url:assessment.originalSourceUrl}]:[])],ottReleaseDate:row.ottReleaseDate,platforms:row.platforms,sourceTitle:row.title,sourceUrl:row.sourceUrl,originalLanguageIds:assessment.originalLanguages,originalLanguageEvidence:assessment.originalEvidence,originalLanguageSourceUrl:assessment.originalSourceUrl,sourceRank:row.sourceRank});
   }
   for(const movie of byId.values()){
+    const dateCorrection=dateCorrections.get(movie.id);
+    if(dateCorrection)movie.releaseDateCorrections=[dateCorrection];
     movie.sourceNames=[...new Set(movie.releaseListings.map(x=>x.sourceName))];
     movie.releaseDateConflicts=movie.platforms.flatMap(platform=>{
       const entries=movie.releaseListings.filter(x=>x.platforms.includes(platform)),dates=[...new Set(entries.map(x=>x.ottReleaseDate))].sort();
@@ -304,6 +319,7 @@ export async function refreshFromOtt(previous={},options={}) {
     movie.description=`Earliest Telugu OTT date reported by these sources: ${movie.ottReleaseDate}${movie.platforms.length?' — '+movie.platforms.join(', '):''}. Original language: ${movie.genres.join(', ')}. Telugu audio is reported by ${movie.sourceNames.join(', ')}; audio tracks and regional availability are not independently checked.${movie.releaseDateConflicts.length?' Some sources report different dates; see the release source links.':''}`;
     const sources=[...new Map(movie.releaseListings.map(x=>[x.sourceUrl,x])).values()];
     movie.links=[...sources.map(x=>({name:x.sourceName,category:'OTT release source',url:x.sourceUrl})),...(movie.originalLanguageSourceUrl?[{name:'Original language',category:'Source',url:movie.originalLanguageSourceUrl}]:[])];
+    if(dateCorrection)movie.links.push({name:dateCorrection.sourceName,category:'Confirmed OTT date',url:dateCorrection.sourceUrl},{name:'Postponement announcement',category:'Release date correction',url:dateCorrection.postponementSourceUrl});
     for(const url of new Set(movie.releaseListings.map(x=>x.castEvidenceUrl).filter(Boolean)))if(!movie.links.some(x=>x.url===url))movie.links.push({name:'Platform title details',category:'Identity source',url});
     if(movie.countrySourceUrl&&!movie.links.some(x=>x.url===movie.countrySourceUrl))movie.links.push({name:'Country of origin',category:'Source',url:movie.countrySourceUrl});
   }

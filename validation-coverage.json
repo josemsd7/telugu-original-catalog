@@ -1,0 +1,280 @@
+{
+  "checkedAt": "2026-10-30T05:33:50.064Z",
+  "result": "PASS",
+  "version": "1.1.1",
+  "sourceRows": 3076,
+  "movieCandidates": 2010,
+  "beforeMovies": 662,
+  "movies": 685,
+  "series": 155,
+  "addedCount": 23,
+  "removedCount": 0,
+  "newestFirst": true,
+  "originalTeluguOnly": true,
+  "oldNamesakeExcluded": true,
+  "postponedDateCorrected": true,
+  "added": [
+    {
+      "id": "tt43737953",
+      "name": "Hushar Pittalu",
+      "canonicalName": "Hushar Pittalu",
+      "year": "2026",
+      "ottReleaseDate": "2026-09-15",
+      "originalLanguageEvidence": "Publisher explicit original-language label",
+      "sources": [
+        "https://www.91mobiles.com/entertainment/hushar-pittalu-movie-223417"
+      ]
+    },
+    {
+      "id": "tt41230714",
+      "name": "Vidaatha",
+      "canonicalName": "Vidhaata 2026",
+      "year": "2026",
+      "ottReleaseDate": "2026-08-05",
+      "originalLanguageEvidence": "Publisher explicit original-language label",
+      "sources": [
+        "https://www.91mobiles.com/entertainment/vidaatha-movie-223497"
+      ]
+    },
+    {
+      "id": "tt36256491",
+      "name": "Ala Chere Seetharamuni Chentaku",
+      "canonicalName": "Ala Chere Seetha Ramuni Chentaku",
+      "year": "2026",
+      "ottReleaseDate": "2026-04-16",
+      "originalLanguageEvidence": "TMDB public original-language field",
+      "sources": [
+        "https://trendraja.in/telugu-movie-ott-release-dates-2021/"
+      ]
+    },
+    {
+      "id": "tt33183872",
+      "name": "Sampradayini Suppini Suddapoosani",
+      "canonicalName": "Sampradayaini Suppini Suddapusaani",
+      "year": "2026",
+      "ottReleaseDate": "2026-04-03",
+      "originalLanguageEvidence": "TMDB public original-language field",
+      "sources": [
+        "https://www.sacnilk.com/movie/Sampradayini_Suppini_Suddapoosani_2026",
+        "https://www.91mobiles.com/entertainment/sampradayini-suppini-suddapoosani-movie-221855"
+      ]
+    },
+    {
+      "id": "tt37803848",
+      "name": "Sri Chidambaram Garu",
+      "canonicalName": "Sri Chidambaram Garu",
+      "year": "2026",
+      "ottReleaseDate": "2026-02-26",
+      "originalLanguageEvidence": "TMDB public original-language field",
+      "sources": [
+        "https://trendraja.in/telugu-movie-ott-release-dates-2021/"
+      ]
+    },
+    {
+      "id": "tt28629017",
+      "name": "Mana ShankaraVaraprasad Garu",
+      "canonicalName": "Mega 157",
+      "year": "2026",
+      "ottReleaseDate": "2026-02-11",
+      "originalLanguageEvidence": "Wikidata original-language metadata",
+      "sources": [
+        "https://www.sacnilk.com/movie/Mana_Shankaravaraprasad_Garu_2026",
+        "https://www.91mobiles.com/entertainment/mana-shankara-varaprasad-garu-movie-221711"
+      ]
+    },
+    {
+      "id": "tt24060892",
+      "name": "They Call Him OG",
+      "canonicalName": "OG",
+      "year": "2025",
+      "ottReleaseDate": "2025-10-23",
+      "originalLanguageEvidence": "TMDB public original-language field",
+      "sources": [
+        "https://www.91mobiles.com/entertainment/they-call-him-og-movie-215630"
+      ]
+    },
+    {
+      "id": "tt30858568",
+      "name": "Mirai",
+      "canonicalName": "Mirayi",
+      "year": "2025",
+      "ottReleaseDate": "2025-10-10",
+      "originalLanguageEvidence": "Wikidata original-language metadata",
+      "sources": [
+        "https://trendraja.in/telugu-movie-ott-release-dates-2021/",
+        "https://www.sacnilk.com/movie/Mirai_2025",
+        "https://www.91mobiles.com/entertainment/mirai-movie-218055"
+      ]
+    },
+    {
+      "id": "tt11773426",
+      "name": "Kingdom",
+      "canonicalName": "Vd12",
+      "year": "2025",
+      "ottReleaseDate": "2025-08-27",
+      "originalLanguageEvidence": "Wikidata original-language metadata",
+      "sources": [
+        "https://trendraja.in/telugu-movie-ott-release-dates-2021/",
+        "https://www.91mobiles.com/entertainment/kingdom-movie-218361"
+      ]
+    },
+    {
+      "id": "tt35162841",
+      "name": "Oh Bhama Ayyo Rama",
+      "canonicalName": "Oh Bhama Ayyo Rama",
+      "year": "2025",
+      "ottReleaseDate": "2025-08-01",
+      "originalLanguageEvidence": "Wikidata original-language metadata",
+      "sources": [
+        "https://trendraja.in/telugu-movie-ott-release-dates-2021/",
+        "https://www.91mobiles.com/entertainment/oh-bhama-ayyo-rama-movie-219507"
+      ]
+    },
+    {
+      "id": "tt24517610",
+      "name": "Kaliyugam 2064",
+      "canonicalName": "Kaliyugam 2064",
+      "year": "2025",
+      "ottReleaseDate": "2025-07-11",
+      "originalLanguageEvidence": "Publisher explicit original-language label",
+      "sources": [
+        "https://www.91mobiles.com/entertainment/kaliyugam-2064-movie-218949"
+      ]
+    },
+    {
+      "id": "tt23804696",
+      "name": "HIT: The Third Case",
+      "canonicalName": "HIT: The 3rd Case",
+      "year": "2025",
+      "ottReleaseDate": "2025-05-29",
+      "originalLanguageEvidence": "TMDB public original-language field",
+      "sources": [
+        "https://www.91mobiles.com/entertainment/hit-the-third-case-movie-218052",
+        "https://trendraja.in/telugu-movie-ott-release-dates-2021/"
+      ]
+    },
+    {
+      "id": "tt35162892",
+      "name": "Akkada Ammayi Ikkada Abbayi",
+      "canonicalName": "Akkada Ammai Ikkada Abbai",
+      "year": "2025",
+      "ottReleaseDate": "2025-05-08",
+      "originalLanguageEvidence": "TMDB public original-language field",
+      "sources": [
+        "https://trendraja.in/telugu-movie-ott-release-dates-2021/",
+        "https://www.91mobiles.com/entertainment/akkada-ammai-ikkada-abbai-movie-218987"
+      ]
+    },
+    {
+      "id": "tt32327574",
+      "name": "MAD Square",
+      "canonicalName": "(MAD)²",
+      "year": "2025",
+      "ottReleaseDate": "2025-04-25",
+      "originalLanguageEvidence": "TMDB public original-language field",
+      "sources": [
+        "https://trendraja.in/telugu-movie-ott-release-dates-2021/"
+      ]
+    },
+    {
+      "id": "tt35229809",
+      "name": "Baapu",
+      "canonicalName": "Baapu - A Father's Story",
+      "year": "2025",
+      "ottReleaseDate": "2025-03-07",
+      "originalLanguageEvidence": "TMDB public original-language field",
+      "sources": [
+        "https://trendraja.in/telugu-movie-ott-release-dates-2021/"
+      ]
+    },
+    {
+      "id": "tt31226981",
+      "name": "Sankranthiki Vasthunam",
+      "canonicalName": "Sankrathiki Vasthunam",
+      "year": "2025",
+      "ottReleaseDate": "2025-03-01",
+      "originalLanguageEvidence": "Wikidata original-language metadata",
+      "sources": [
+        "https://trendraja.in/telugu-movie-ott-release-dates-2021/",
+        "https://www.91mobiles.com/entertainment/sankranthiki-vasthunam-movie-217989"
+      ]
+    },
+    {
+      "id": "tt31629818",
+      "name": "Devara",
+      "canonicalName": "Devara 2",
+      "ottReleaseDate": "2024-11-08",
+      "originalLanguageEvidence": "Wikidata original-language metadata",
+      "sources": [
+        "https://trendraja.in/telugu-movie-ott-release-dates-2021/"
+      ]
+    },
+    {
+      "id": "tt15290106",
+      "name": "105 Minuttess",
+      "canonicalName": "One Not Five Minuttess",
+      "year": "2024",
+      "ottReleaseDate": "2024-06-07",
+      "originalLanguageEvidence": "TMDB public original-language field",
+      "sources": [
+        "https://trendraja.in/telugu-movie-ott-release-dates-2021/",
+        "https://www.91mobiles.com/entertainment/one-not-five-minuttess-movie-216246"
+      ]
+    },
+    {
+      "id": "tt32339528",
+      "name": "S.I.T",
+      "canonicalName": "S.I.T Special Investigation Team",
+      "year": "2024",
+      "ottReleaseDate": "2024-05-10",
+      "originalLanguageEvidence": "TMDB public original-language field",
+      "sources": [
+        "https://trendraja.in/telugu-movie-ott-release-dates-2021/"
+      ]
+    },
+    {
+      "id": "tt23576400",
+      "name": "Seetharamapuramlo Okapremajanta",
+      "canonicalName": "Seetharamapuramlo",
+      "year": "2022",
+      "ottReleaseDate": "2023-09-22",
+      "originalLanguageEvidence": "TMDB public original-language field",
+      "sources": [
+        "https://www.91mobiles.com/entertainment/seetharamapuramlo-movie-213818"
+      ]
+    },
+    {
+      "id": "tt15263698",
+      "name": "Konda Polam",
+      "canonicalName": "Konda Polam",
+      "year": "2021",
+      "ottReleaseDate": "2021-12-08",
+      "originalLanguageEvidence": "TMDB public original-language field",
+      "sources": [
+        "https://trendraja.in/telugu-movie-ott-release-dates-2021/"
+      ]
+    },
+    {
+      "id": "tt9760426",
+      "name": "Romantic",
+      "canonicalName": "Romantic",
+      "year": "2021",
+      "ottReleaseDate": "2021-11-26",
+      "originalLanguageEvidence": "TMDB public original-language field",
+      "sources": [
+        "https://trendraja.in/telugu-movie-ott-release-dates-2021/"
+      ]
+    },
+    {
+      "id": "tt13262002",
+      "name": "Thank You Brother",
+      "canonicalName": "Thank You Brother!",
+      "year": "2021",
+      "ottReleaseDate": "2021-05-07",
+      "originalLanguageEvidence": "TMDB public original-language field",
+      "sources": [
+        "https://trendraja.in/telugu-movie-ott-release-dates-2021/"
+      ]
+    }
+  ]
+}

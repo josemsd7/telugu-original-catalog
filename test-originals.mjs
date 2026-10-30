@@ -12,8 +12,9 @@ import {exportStatic} from './export.mjs';
 import {exportSeries} from './export-series.mjs';
 import {normalize} from './src/identity.mjs';
 import {parseOfficial,classifyReleaseRows} from './src/official-sources.mjs';
-import {imdbTitleSearch,SEARCH_SCHEMA} from './src/title-search.mjs';
+import {imdbTitleSearch,SEARCH_SCHEMA,withTitleAliases} from './src/title-search.mjs';
 import {titleScore} from './src/source-refresh.mjs';
+import {supersededRelease} from './src/confirmed-films.mjs';
 const row={title:'Sample',languageText:'Telugu',ottReleaseDate:'2026-10-30',genreText:'Movie',platforms:['Aha'],sourceUrl:'https://example.org/releases',sourceName:'Fixture',sourceRank:0};
 const match={meta:{id:'tt0000001',name:'Sample',type:'movie',countries:['india'],cast:[]},titleScore:100,castMatches:0};
 const identity=languages=>({items:['Q1'],languages,countries:['Q668'],tmdbIds:[]});
@@ -126,4 +127,41 @@ test('a Netflix-backed correction is bound to the exact release, IMDb ID, year a
  assert.equal(assessFilm({...row,ottReleaseDate:'2026-10-29'},match,identity([]),facts).reason,'country_conflict');
  assert.equal(assessFilm(row,{...match,meta:{...match.meta,cast:['Different Actor']}},identity([]),facts).reason,'country_conflict');
  assert.equal(assessFilm(row,{...match,meta:{...match.meta,id:'tt0000000'}},identity([]),facts).reason,'country_conflict');
+});
+test('current title aliases survive cached or fresh metadata that still uses a working title',async()=>{
+ const now=Date.parse('2026-10-30T04:00:00Z'),checkedAt=new Date(now).toISOString(),id='tt28629017',name='Mana Shankara Vara Prasad Garu';
+ for(const cached of [true,false]){
+  const previous={sourceSearchCache:{[normalize(name)]:{checkedAt,schemaVersion:SEARCH_SCHEMA,hits:[{id,name,year:'2026'}]}},sourceMetadataCache:{},identities:{[id]:{...identity(['Q8097']),checkedAt}}};
+  if(cached)previous.sourceMetadataCache[id]={id,name:'Mega 157',type:'movie',countries:['india'],year:'2026',cast:['Chiranjeevi'],directors:[],checkedAt};
+  const result=await refreshFromOtt(previous,{now,source:{rows:[{...row,title:name,ottReleaseDate:'2026-02-11',castText:'Chiranjeevi'}],snapshots:{},statuses:[]},fetcher:async()=>Response.json({meta:{id,name:'Mega 157',type:'movie',country:'India',year:'2026',cast:['Chiranjeevi']}})});
+  assert.equal(result.movies[0]?.id,id);assert.equal(result.movies[0].name,name);assert(result.sourceMetadataCache[id].aliases.includes(name));
+ }
+ const aliased=withTitleAliases({id,name:'Mega 157'},{id,name});
+ assert.equal(assessFilm({...row,title:name},{...match,meta:{...match.meta,...aliased},titleScore:100},identity(['Q8097']),{title:name,languageIds:['Q8097']}).reason,null);
+ assert.equal(assessFilm({...row,title:name},{...match,meta:{...match.meta,...aliased},titleScore:100},identity(['Q8097']),{title:'Another Film',languageIds:['Q8097']}).reason,'original_language_identity_conflict');
+ assert.equal(withTitleAliases({id,name:'Mega 157'},{id:'tt0000000',name}).aliases,undefined);
+});
+test('shorter IMDb suggestion queries recover spelling variations without accepting unrelated hits',async()=>{
+ const calls=[];const fetcher=async url=>{calls.push(url);return Response.json({d:url.includes('/sampradayini.json')?[{id:'tt1234567',l:'Sampradayini Suppini Suddapoosani',qid:'movie',y:2026},{id:'tt9999999',l:'Unrelated',qid:'movie',y:2026}]:[]});};
+ const hits=await imdbTitleSearch('Sampradayini Suppini Suddapoosani','movie',fetcher,hit=>titleScore('Sampradayini Suppini Suddapoosani',hit.name)>0);
+ assert.deepEqual(hits.map(x=>x.id),['tt1234567']);assert(calls.some(x=>x.includes('/sampradayini.json')));
+});
+test('long transliterations need corroboration and current IMDb facts repair sparse cached casts',async()=>{
+ const score=titleScore('Sampradayini Suppini Suddapoosani','Sampradayaini Suppini Suddapusaani');assert(score>0&&score<80);
+ assert.equal(assessFilm(row,{...match,titleScore:score},identity(['Q8097'])).reason,'title_variant_uncorroborated');
+ assert.equal(assessFilm({...row,movieYearHint:'2026'},{...match,titleScore:score},identity(['Q8097'])).reason,null);
+ assert.equal(titleScore('Sri Chidambaram Garu','Sri Chidambaram'),100);assert.equal(titleScore('Mr Middle Class','Mister Middle Class'),100);
+ const now=Date.parse('2026-10-30T04:00:00Z'),checkedAt=new Date(now).toISOString(),id='tt1111234',name='New Feature';
+ const previous={sourceSearchCache:{newfeature:{checkedAt,schemaVersion:SEARCH_SCHEMA,hits:[{id,name,year:'2026',cast:['Lead Actor'],identitySource:'IMDb public title suggestions'}]}},sourceMetadataCache:{[id]:{id,name,type:'movie',year:'2017',countries:['india'],cast:['Supporting Actor'],directors:[],checkedAt}},identities:{[id]:{...identity(['Q8097']),checkedAt}}};
+ const result=await refreshFromOtt(previous,{now,source:{rows:[{...row,title:name,castText:'Lead Actor'}],snapshots:{},statuses:[]},fetcher:()=>{throw Error('Unexpected request');}});
+ assert.equal(result.movies[0]?.id,id);assert.equal(result.movies[0].releaseInfo,'2026');assert(result.sourceMetadataCache[id].cast.includes('Supporting Actor'));
+});
+test('documented postponed dates cannot outrank confirmed streaming availability',async()=>{
+ const now=Date.parse('2026-10-30T04:00:00Z'),checkedAt=new Date(now).toISOString(),id='tt37803848',name='Sri Chidambaram Garu';
+ const previous={sourceSearchCache:{sreechidambaramgaru:{checkedAt,schemaVersion:SEARCH_SCHEMA,hits:[{id,name,year:'2026'}]}},sourceMetadataCache:{[id]:{id,name,type:'movie',year:'2026',countries:['india'],cast:[],directors:[],checkedAt}},identities:{[id]:{...identity(['Q8097']),checkedAt}}};
+ const release={...row,title:name,platforms:['ETV Win'],ottReleaseDate:'2026-02-19'};
+ assert.equal(supersededRelease(release,{id,year:'2026'}).actualDate,'2026-02-26');
+ assert.equal(supersededRelease(release,{id:'tt0000000',year:'2026'}),undefined);
+ const result=await refreshFromOtt(previous,{now,source:{rows:[release,{...release,ottReleaseDate:'2026-02-26'}],snapshots:{},statuses:[]},fetcher:()=>{throw Error('Unexpected request');}});
+ assert.equal(result.movies[0].ottReleaseDate,'2026-02-26');assert.equal(result.counts.superseded_ott_announcement,1);assert.equal(result.movies[0].releaseDateCorrections[0].announcedDate,'2026-02-19');
 });

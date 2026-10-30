@@ -1,46 +1,49 @@
 {
-  "checkedAt": "2026-10-30T03:57:15.674Z",
+  "checkedAt": "2026-10-30T05:37:17.463Z",
   "result": "PASS",
-  "manifestVersion": "1.1.0",
-  "movies": 662,
+  "manifestVersion": "1.1.1",
+  "movies": 685,
   "series": 155,
+  "addedCount": 23,
+  "allAddedPostersVerified": true,
   "cases": [
+    {
+      "id": "tt28629017",
+      "name": "Mana ShankaraVaraprasad Garu",
+      "position": 105,
+      "date": "2026-02-11"
+    },
     {
       "id": "tt37537243",
       "name": "Maremma",
-      "date": "2026-10-08",
-      "year": "2026"
+      "position": 12,
+      "date": "2026-10-08"
     },
     {
       "id": "tt35448218",
       "name": "EPIC - The First Semester",
-      "date": "2026-10-09",
-      "year": "2026"
+      "position": 11,
+      "date": "2026-10-09"
     },
     {
       "id": "tt45382318",
       "name": "Kaagitham Padavalu",
-      "date": "2026-10-16",
-      "year": "2026"
-    },
-    {
-      "id": "tt47421307",
-      "name": "SI Yugandhar",
-      "date": "2026-10-30",
-      "year": "2026"
+      "position": 8,
+      "date": "2026-10-16"
     }
   ],
   "oldNamesakeExcluded": true,
   "archivalTitleDate": "2021-04-16",
+  "postponedDateCorrected": "2026-02-26",
   "moviePosters": {
-    "total": 662,
-    "actualPosters": 660,
+    "total": 685,
+    "actualPosters": 683,
     "fallbackPosters": 2,
     "fallbackIds": [
-      "tt28251952",
-      "tt41030715"
+      "tt41030715",
+      "tt28251952"
     ],
-    "checkedAt": "2026-10-30T03:55:48.596Z"
+    "checkedAt": "2026-10-30T05:34:19.940Z"
   },
   "seriesPosters": {
     "total": 155,
@@ -48,36 +51,36 @@
     "fallbackPosters": 30,
     "fallbackIds": [
       "tt30962086",
+      "tt27618285",
       "tt30457355",
       "tt18358308",
-      "tt30246098",
-      "tt39110720",
-      "tt27618285",
       "tt17508872",
       "tt39061146",
-      "tt21084160",
-      "tt18358232",
       "tt39054341",
+      "tt30246098",
+      "tt39110720",
+      "tt18358232",
+      "tt21084160",
       "tt39053762",
       "tt13545730",
       "tt21193634",
       "tt15338090",
-      "tt39053834",
       "tt39054276",
-      "tt12145820",
+      "tt39053834",
       "tt12106682",
       "tt12100078",
       "tt12100156",
       "tt22083550",
       "tt12106076",
       "tt12106134",
-      "tt12587540",
+      "tt12145820",
+      "tt9325578",
       "tt12363362",
       "tt12368910",
       "tt12368964",
-      "tt12229544",
-      "tt9325578"
+      "tt12587540",
+      "tt12229544"
     ],
-    "checkedAt": "2026-10-30T03:56:11.631Z"
+    "checkedAt": "2026-10-30T05:35:01.058Z"
   }
 }
