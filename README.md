@@ -62,12 +62,16 @@ The refresh also reads public metadata from the following official services, wit
 | Prime Video | Public Telugu search, matching public movie cards, title-bound hydration metadata, cast, audio tracks and film year | Film release dates do not establish OTT dates |
 | SonyLIV | Public home/movie/Telugu pages and their embedded title metadata | Contract dates, original film dates and generated page-upload timestamps do not establish new OTT dates |
 | ETV Win | Official movie/series XML sitemaps and title-bound Movie/TVSeries metadata exposed in public pages | Only explicit WatchAction availability offers can supply independent OTT dates; uploadDate/dateCreated also contain theatrical dates and are used only as metadata context |
-| Sun NXT | Official Telugu movie sitemap records, recent TV sitemap partitions and full-title detail pages | Explicit same-title wording such as “is streaming on Sun NXT from” can supply a date; film years and generic teaser-upload dates cannot |
+| Sun NXT | Official Telugu movie sitemap records, recent TV sitemap partitions, full-title pages and the official public blog/feed | Explicit same-title streaming wording can supply a date; film years, article publication dates and generic teaser-upload dates cannot |
 | JioHotstar | The public India page is checked and its result reported | During validation this server received the Disney Bundle regional page, so direct India catalog metadata was unavailable. Existing publisher listings for JioHotstar remain active |
 
 Original-language evidence is checked separately from available audio. A movie having a Telugu audio track does not make it a Telugu original. Netflix's explicit Original labels can fill missing original-language facts, but conflicting Wikidata/TMDB/platform evidence remains excluded. Platform metadata is joined only to compatible title names and years; evidence links are retained with accepted entries. Official streaming dates require a known film year so an unknown old film cannot be promoted as a new release.
 
 Each refresh budgets up to 120 Netflix, 45 Prime Video, 120 ETV Win and 100 Sun NXT new or expired detail pages. Recent dated source titles receive priority. Fresh cached titles do not consume this budget, allowing later refreshes to inspect previously unchecked titles. Successful detail facts cache for seven days, recent dated releases for six hours, and transient failures for six hours. Retained records, partial scans and regional restrictions are visible in the live status reports. These sources improve discovery and matching; they do not guarantee every platform title or independently verify playable audio in India.
+
+Recent publisher release listings also shorten missing-audio checks to six hours, so a pre-release title page cannot remain hidden behind an older seven-day metadata cache.
+
+Sun NXT's main site worked during local validation but returned HTTP 403 from GitHub Actions. The adapter retains the last verified title records and also checks the separate official public blog/feed for discovery. An article's publication date is never used as an OTT release date; only an explicit dated streaming announcement for that named film can establish one. Source status reports distinguish these partial results and failures.
 
 ## Automatic refresh and hosting
 

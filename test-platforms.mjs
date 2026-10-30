@@ -72,3 +72,19 @@ test('fresh cached titles leave the detail budget available for previously unche
  const calls=[];const result=await discoverPlatforms(prior,{now,sources:[source],fetcher:async url=>{calls.push(url);return new Response(url===unseen?ld({'@type':'Movie',url:unseen,name:'Unseen'})+'<li>2026</li><div>Audio Telugu [Original]</div>':list);}});
  assert(calls.includes(unseen));assert(!calls.includes(known));assert.equal(result.rows.length,2);assert.equal(result.statuses[0].detailPagesScheduled,1);
 });
+test('recent release listings retry pre-release missing-audio facts on the six-hour refresh',async()=>{
+ const now=Date.parse('2026-10-30T06:00:00Z'),url='https://www.netflix.com/in/title/12345678';
+ const prior={officialDetailCache:{[url]:{platformSchema:1,checkedAt:new Date(now-7*3600000).toISOString(),error:'Netflix public Audio section does not list Telugu'}},sourceSnapshots:{publisher:{rows:[{title:'New Release',ottReleaseDate:'2026-10-30',platforms:['Netflix']}]}}};
+ const source={key:'netflix-official',name:'Netflix official',kind:'netflix',platform:'Netflix',url:'https://www.netflix.com/in/browse/genre/81404071',pages:['https://www.netflix.com/in/browse/genre/81404071'],list:'netflix-list',detail:'netflix-detail',limit:1};
+ const list=ld({'@type':'ItemList',itemListElement:[{item:{'@type':'Movie',name:'New Release',url}}]});
+ const calls=[];const result=await discoverPlatforms(prior,{now,sources:[source],fetcher:async requested=>{calls.push(requested);return new Response(requested===url?ld({'@type':'Movie',url,name:'New Release'})+'<li>2026</li><div>Audio Telugu [Original]</div>':list);}});
+ assert(calls.includes(url));assert.equal(result.rows.length,1);
+});
+test('Sun NXT official blog discovery ignores publication dates and unrelated streaming announcements',()=>{
+ const movie='https://www.sunnxt.com/telugu-movie-sample-2026/detail/12345',article='https://blog.sunnxt.com/sample/';
+ const feed=body=>`<rss xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><item><title>Sample on Sun NXT</title><link>${article}</link><pubDate>Fri, 30 Oct 2026 00:00:00 GMT</pubDate><content:encoded><![CDATA[${body}]]></content:encoded></item></channel></rss>`;
+ const body=`<p>Streaming on Sun NXT from October 16, 2026.</p><a href="${movie}">Watch Sample</a>`;
+ const row=parsePlatform(feed(body),'sun-blog','https://blog.sunnxt.com/feed/').rows[0];assert.equal(row.ottReleaseDate,'2026-10-16');assert.equal(row.sourceUrl,article);assert.equal(row.platformTitleUrl,movie);
+ assert.equal(parsePlatform(feed(`<a href="${movie}">Watch</a>`),'sun-blog','https://blog.sunnxt.com/feed/').rows[0].ottReleaseDate,null);
+ assert.equal(parsePlatform(feed(body).replace('<title>Sample on Sun NXT</title>','<title>Unrelated Film</title>'),'sun-blog','https://blog.sunnxt.com/feed/').rows[0].ottReleaseDate,null);
+});

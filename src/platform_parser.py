@@ -168,8 +168,35 @@ def sun_detail(html,url):
     m=re.search(r'["“]([^"”]+)["”]\s+is streaming on Sun NXT from\s+(.+?)(?:\.|$)',description,re.I)
     if m and key(m[1])==key(x['name']):day=parse_date(re.sub(r'(\d)(st|nd|rd|th)\b',r'\1',m[2]))
     return {'rows':[row(x['name'],url,'sun','movie' if expected=='movie' else 'series',year,people(x),day)]}
+def sun_blog(html,url):
+    posts=[]
+    if '<rss' in html[:500]:
+        feed=ET.fromstring(html)
+        for item in feed.findall('./channel/item'):
+            content=next((c.text or '' for c in item if c.tag.endswith('encoded')),'')
+            posts.append((item.findtext('title') or '',item.findtext('link') or url,content))
+    else:posts=[('',url,html)]
+    rows=[]
+    for heading,evidence,body in posts:
+        root=tree(body);movies={}
+        for a in root.all(lambda n:n.tag=='a' and n.attrs.get('href')):
+            target=canonical_url(a.attrs['href'],'sun')
+            if not target:continue
+            m=re.fullmatch(r'https://www\.sunnxt\.com/telugu-movie-(.*?)-(20\d{2})/detail/\d+',target)
+            if not m or re.search(r'\b(?:teaser|trailer|promo|song|clip|review|making)\b',m[1].replace('-',' ')):continue
+            title=m[1].replace('-',' ').title();movies[target]=(title,m[2])
+        main=[target for target,(title,year) in movies.items() if key(title) in key(heading)]
+        # Article publication is not an OTT date. A single named film and an
+        # explicit dated streaming announcement are required to establish one.
+        dates=re.findall(r'\b(?:streaming|premieres?|premiering)\s+(?:(?:exclusively|only)\s+)?(?:on\s+Sun\s*NXT\s+)?(?:from|on)\s+([A-Z][a-z]+\s+\d{1,2}(?:st|nd|rd|th)?[,]?\s+20\d{2})',root.text(),re.I)
+        dates=list(dict.fromkeys(parse_date(re.sub(r'(\d)(st|nd|rd|th)\b',r'\1',date)) for date in dates));dates=[d for d in dates if d]
+        for target,(title,year) in movies.items():
+            result=row(title,evidence,'sun','movie',year,day=dates[0] if len(main)==1 and target==main[0] and len(dates)==1 else None)
+            result['platformTitleUrl']=target;result['audioEvidence']='Sun NXT official blog link to a Telugu movie page'
+            rows.append(result)
+    return {'rows':list({(x['sourceUrl'],x['platformTitleUrl']):x for x in rows}.values())}
 def parse(html,kind,url):
-    return {'netflix-list':netflix_list,'netflix-detail':netflix_detail,'prime-list':prime_list,'prime-detail':prime_detail,'sony':sony_rows,'etv-list':lambda h,u:sitemap(h,u,'etv'),'etv-detail':etv_detail,'sun-list':lambda h,u:sitemap(h,u,'sun'),'sun-detail':sun_detail}[kind](html,url)
+    return {'netflix-list':netflix_list,'netflix-detail':netflix_detail,'prime-list':prime_list,'prime-detail':prime_detail,'sony':sony_rows,'etv-list':lambda h,u:sitemap(h,u,'etv'),'etv-detail':etv_detail,'sun-list':lambda h,u:sitemap(h,u,'sun'),'sun-detail':sun_detail,'sun-blog':sun_blog}[kind](html,url)
 if __name__=='__main__':
     try:print(json.dumps(parse(sys.stdin.read(),sys.argv[1],sys.argv[2]),ensure_ascii=False))
     except Exception as e:print(str(e),file=sys.stderr);sys.exit(1)

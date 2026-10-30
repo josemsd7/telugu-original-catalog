@@ -2,7 +2,7 @@
   "checkedAt": "2026-10-30T06:17:13.411Z",
   "result": "PASS",
   "version": "1.2.0",
-  "tests": 24,
+  "tests": 26,
   "movies": 686,
   "series": 155,
   "allPreviousMoviesRetained": true,
@@ -85,5 +85,7 @@
       ]
     }
   ],
-  "metadataLinkedMovies": 97
+  "metadataLinkedMovies": 97,
+  "recentReleaseCacheRetryVerified": true,
+  "sunNxtGitHubRestriction": "Main sitemaps returned HTTP 403; cached title records retained. Official public blog/feed discovery added."
 }
