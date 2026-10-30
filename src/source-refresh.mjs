@@ -5,6 +5,9 @@ import {discoverSources,SOURCE_URL,SOURCE_NAME,SOURCES} from './discovery.mjs';
 import {confirmedRelease,confirmedIdentity} from './confirmed-films.mjs';
 import {enrichProviderRows} from './provider-facts.mjs';
 import {indiaDate,RELEASE_TIME_ZONE} from './release-time.mjs';
+import {titleAliases,imdbTitleSearch,SEARCH_SCHEMA} from './title-search.mjs';
+import {discoverOfficial,OFFICIAL_SOURCES,classifyReleaseRows} from './official-sources.mjs';
+import {discover91Movies,NINETYONE_MOVIES} from './movie-discovery.mjs';
 
 export {SOURCE_URL};
 const SIX_HOURS=6*3600000,WEEK=7*86400000;
@@ -25,18 +28,24 @@ export function parseSource(html,kind='ottreleasemovies',referenceDate=indiaDate
 export function cleanTitle(title) {
   return String(title||'').replace(/\b(?:web\s*series|movie|film)\b/gi,' ').replace(/\([^)]*\b(?:telugu|tamil|hindi|202\d)\b[^)]*\)/gi,' ').replace(/\b(?:season\s*\d+|\d+\s*-?\s*episodes?)\b/gi,' ').replace(/\bIII\b/g,'3').replace(/\bII\b/g,'2').replace(/\s+/g,' ').trim();
 }
-const titleKey=value=>normalize(cleanTitle(value).replace(/&/g,' and ').replace(/\band\b/gi,' '));
+const titleKey=value=>normalize((titleAliases(cleanTitle(value))[0]||cleanTitle(value)).replace(/&/g,' and ').replace(/\b(?:and|the)\b/gi,' '));
 const phonetic=value=>titleKey(value).replace(/h/g,'').replace(/[gk]/g,'k').replace(/[td]/g,'t').replace(/[bp]/g,'p').replace(/[vw]/g,'v').replace(/(.)\1+/g,'$1');
 const titleVariants=value=>{
   const full=cleanTitle(value),main=full.replace(/\([^)]*\)/g,' ').replace(/\s+/g,' ').trim();
   const aliases=[...full.matchAll(/\(([^)]+)\)/g)].map(x=>x[1]).filter(x=>!/^re\s*-?\s*release$/i.test(x)&&/[A-Za-z]{3}/.test(x));
-  return [...new Set([main,...aliases,full].filter(Boolean))];
+  return [...new Set([...titleAliases(main),...aliases,...titleAliases(full)].filter(Boolean))];
 };
 export function titleScore(source,title) {
   if(titleVariants(source).some(x=>titleKey(x)===titleKey(title)))return 100;
   if(titleVariants(source).some(x=>phonetic(x)===phonetic(title)))return 90;
-  const prefix=source.split(':')[0];
-  if(source.includes(':')&&!title.includes(':')&&titleKey(prefix).length>=6&&titleKey(prefix)===titleKey(title))return 80;
+  const prefix=titleVariants(source).filter(x=>titleKey(x).length>=6);
+  if(prefix.some(a=>titleVariants(title).some(b=>titleKey(a)===titleKey(b))))return 80;
+  const a=titleKey(source),b=titleKey(title);
+  if(Math.min(a.length,b.length)>=12&&Math.abs(a.length-b.length)<=2){
+    let prior=Array.from({length:b.length+1},(_,i)=>i);
+    for(let i=1;i<=a.length;i++){const next=[i];for(let j=1;j<=b.length;j++)next[j]=Math.min(next[j-1]+1,prior[j]+1,prior[j-1]+(a[i-1]===b[j-1]?0:1));prior=next;}
+    if(prior[b.length]<=2)return 75;
+  }
   return 0;
 }
 
@@ -44,7 +53,7 @@ export function sourceReason(row,today) {
   if(!row.ottReleaseDate)return 'missing_ott_date';
   if(row.tentative)return 'tentative_or_subtitles_only';
   if(row.ottReleaseDate>today)return 'upcoming';
-  if(/\b(series|season|episodes?|reality|sitcom|show)\b/i.test(row.title+' '+row.genreText))return 'not_a_movie';
+  if(/\b(series|season|episodes?|reality|sitcom|show)\b/i.test(row.genreText)||(!/\b(movie|film)\b/i.test(row.genreText)&&/\b(series|season|episodes?|reality|sitcom|show)\b/i.test(row.title)))return 'not_a_movie';
   if(!/telugu/i.test(row.languageText))return 'telugu_audio_not_listed';
   if(/subtitles?/i.test(row.languageText))return 'subtitles_not_audio';
   if(/\b(korean?|koria|chinese|mandarin|japanese|spanish|french|turkish|arabic)\b/i.test(row.languageText))return 'non_indian_language';
@@ -86,17 +95,19 @@ function matchingPageTitle(a,b) {
 
 export function assessFilm(row,match,identity,facts) {
   const meta=match.meta;
+  const confirmed=confirmedIdentity(row,meta);
+  if(confirmed?.ignoredTmdbId&&confirmed.ignoredTmdbId===meta.tmdbId)facts=undefined;
   if(identity?.items.length>1)return {reason:'ambiguous_identity'};
   if(facts&&!matchingPageTitle(meta.name,facts.title))return {reason:'original_language_identity_conflict'};
   const countries=meta.countries||[];
   if(countries.length&&!countries.includes('india'))return {reason:'non_indian_film'};
   if(identity?.countries.length&&!identity.countries.includes('Q668'))return {reason:'country_conflict'};
   if(facts?.countries?.length&&!facts.countries.includes('india'))return {reason:'country_conflict'};
-  if(!countries.includes('india')&&!identity?.countries.includes('Q668')&&!facts?.countries?.includes('india'))return {reason:'indian_origin_unconfirmed'};
   if(identity?.tmdbIds.length&&meta.tmdbId&&!identity.tmdbIds.includes(meta.tmdbId))return {reason:'identity_conflict'};
   if(meta.cast?.length&&row.castText&&match.castMatches===0)return {reason:'cast_mismatch'};
   if(match.titleScore===0)return {reason:'title_mismatch'};
-  const confirmed=confirmedIdentity(row,meta),confirmedLanguages=confirmed?.originalLanguages||[];
+  if(match.titleScore<80&&match.castMatches===0&&!row.movieYearHint)return {reason:'title_variant_uncorroborated'};
+  const confirmedLanguages=confirmed?.originalLanguages||[];
   const hint=languageHint(row),wikiLanguages=identity?.languages||[],pageLanguages=facts?.languageIds||[];
   if(wikiLanguages.length&&pageLanguages.some(id=>!wikiLanguages.includes(id)))return {reason:'original_language_conflict'};
   if(confirmedLanguages.length&&[...wikiLanguages,...pageLanguages].some(id=>!confirmedLanguages.includes(id)))return {reason:'original_language_conflict'};
@@ -105,7 +116,7 @@ export function assessFilm(row,match,identity,facts) {
   const originalLanguages=languages.length?languages:hint?[hint]:[];
   if(!originalLanguages.length)return {reason:'original_language_unconfirmed'};
   if(!originalLanguages.includes('Q8097'))return {reason:'not_original_telugu'};
-  return {reason:null,originalLanguages,originalEvidence:wikiLanguages.length?'Wikidata original-language metadata':pageLanguages.length?'TMDB public original-language field':confirmedLanguages.length?confirmed.sourceName:'Publisher explicit original-language label',originalSourceUrl:!wikiLanguages.length?(pageLanguages.length?facts.sourceUrl:confirmed?.sourceUrl):undefined,countryEvidence:countries.includes('india')?'Cinemeta country metadata':identity?.countries.includes('Q668')?'Wikidata country metadata':'TMDB public countryOfOrigin field',countrySourceUrl:!countries.includes('india')&&!identity?.countries.includes('Q668')?facts?.sourceUrl:undefined};
+  return {reason:null,originalLanguages,originalEvidence:wikiLanguages.length?'Wikidata original-language metadata':pageLanguages.length?'TMDB public original-language field':confirmedLanguages.length?confirmed.sourceName:'Publisher explicit original-language label',originalSourceUrl:!wikiLanguages.length?(pageLanguages.length?facts.sourceUrl:confirmed?.sourceUrl):undefined,countryEvidence:countries.includes('india')?'Cinemeta country metadata':identity?.countries.includes('Q668')?'Wikidata country metadata':facts?.countries?.includes('india')?'TMDB public countryOfOrigin field':'Country field unavailable; original Telugu language verified separately',countrySourceUrl:!countries.includes('india')&&!identity?.countries.includes('Q668')?facts?.sourceUrl:undefined};
 }
 
 async function response(url,fetcher) {
@@ -120,7 +131,18 @@ function metadata(m,checkedAt) {
 
 export async function refreshFromOtt(previous={},options={}) {
   const fetcher=options.fetcher||fetch,now=options.now||Date.now(),checkedAt=new Date(now).toISOString(),today=indiaDate(now);
-  const source=options.source||await discoverSources(previous,{fetcher,now,parsePage:parseSource,onProgress:options.onProgress});
+  let source=options.source;
+  let officialDetailCache=previous.officialDetailCache||{};
+  if(!source){
+    const results=await Promise.allSettled([discoverSources(previous,{fetcher,now,parsePage:parseSource,onProgress:options.onProgress,allowCachedOnly:true}),discoverOfficial(previous,{fetcher,now,onProgress:options.onProgress}),discover91Movies(previous,{fetcher,now,onProgress:options.onProgress})]);
+    const base=results[0].status==='fulfilled'?results[0].value:{rows:[],snapshots:{},statuses:SOURCES.map(s=>({...s,state:'unavailable',error:String(results[0].reason)})),freshSourceCount:0};
+    const official=results[1].status==='fulfilled'?results[1].value:{rows:[],snapshots:{},statuses:[],freshSourceCount:0};
+    const extra=results[2].status==='fulfilled'?results[2].value:{rows:[],status:{...NINETYONE_MOVIES,state:'unavailable',error:String(results[2].reason)},fresh:false};
+    if(!base.freshSourceCount&&!official.freshSourceCount&&!extra.fresh)throw Error('All release sources failed; preserving last successful catalog');
+    source={...base,rows:[...base.rows,...official.rows,...extra.rows],snapshots:{...base.snapshots,...official.snapshots,...(extra.snapshot?{[NINETYONE_MOVIES.key]:extra.snapshot}:{})},statuses:[...base.statuses,...official.statuses,extra.status],windowStart:null,historyDays:null};
+    source.rows=classifyReleaseRows(source.rows);
+    officialDetailCache=official.cache||officialDetailCache;
+  }
   if(!Array.isArray(source.rows)||!source.rows.length)throw new Error('Release source empty; preserving last successful catalog');
   const counts={},audit=[],warnings=[];
   const record=(row,reason)=>{counts[reason]=(counts[reason]||0)+1;audit.push({title:row.title,ottReleaseDate:row.ottReleaseDate,platforms:row.platforms,sourceName:row.sourceName||'OTTReleaseMovies',sourceUrl:row.sourceUrl,reason});};
@@ -139,31 +161,35 @@ export async function refreshFromOtt(previous={},options={}) {
     if(!/^(Metadata HTTP|The operation|fetch failed)/.test(message))continue;
     if(/^tt\d+$/.test(label))failedMetadata.set(label,message);else failedSearches.set(titleKey(label),message);
   }
-  const searchPromises=new Map(),metaPromises=new Map();
+  const searchPromises=new Map(),metaPromises=new Map(),confirmedProofs=new Map();
   async function search(row) {
     const key=titleKey(row.title),cached=searchCache[key];
-    if(stamp(cached,now,cached?.hits.length?WEEK:SIX_HOURS)){
-      const hits=cached.hits.filter(x=>titleScore(row.title,x.name)>0).slice(0,4);
-      searchCache[key]={...cached,hits};
+    const relevant=hit=>!hit.year||(Number(hit.year)<=Number(row.ottReleaseDate.slice(0,4))&&Number(hit.year)>=Number(row.ottReleaseDate.slice(0,4))-1);
+    const promiseKey=key+'|'+row.ottReleaseDate.slice(0,4);
+    if(cached?.schemaVersion===SEARCH_SCHEMA&&stamp(cached,now,cached?.hits.some(relevant)?WEEK:SIX_HOURS)){
+      const hits=cached.hits.filter(x=>titleScore(row.title,x.name)>0&&relevant(x)).slice(0,8);
       if(hits.length||cached.hits.length===0)return hits;
+      if(cached.checkedYear===row.ottReleaseDate.slice(0,4))return cached.hits.filter(x=>titleScore(row.title,x.name)>0).slice(0,8);
     }
     if(failedSearches.has(key))throw new Error('Cached lookup failure: '+failedSearches.get(key));
-    if(!searchPromises.has(key))searchPromises.set(key,(async()=>{
+    if(!searchPromises.has(promiseKey))searchPromises.set(promiseKey,(async()=>{
       let hits=[];
-      const queries=titleVariants(row.title).slice(0,2).map(x=>x.includes(':')?x.split(':')[0].trim():x);
+      const queries=titleVariants(row.title).slice(0,3);
       for(const query of [...new Set(queries)]){
         const url='https://v3-cinemeta.strem.io/catalog/movie/top/search='+encodeURIComponent(query)+'.json';
         const data=await (await response(url,fetcher)).json();
         if(!Array.isArray(data.metas))throw new Error('Invalid movie search response');
-        hits=data.metas.filter(x=>/^tt\d+$/.test(x.id||'')&&(!x.type||x.type==='movie')&&titleScore(row.title,x.name)>0).slice(0,4).map(m=>({id:m.id,name:String(m.name||''),year:year(m.releaseInfo),poster:safePoster(m.poster)}));
-        if(hits.length)break;
+        const found=data.metas.filter(x=>/^tt\d+$/.test(x.id||'')&&(!x.type||x.type==='movie')&&titleScore(row.title,x.name)>0).slice(0,8).map(m=>({id:m.id,name:String(m.name||''),year:year(m.releaseInfo),poster:safePoster(m.poster)}));
+        hits=[...new Map([...hits,...found].map(x=>[x.id,x])).values()];
+        if(hits.some(relevant))break;
       }
-      searchCache[key]={hits,checkedAt};return hits;
+      if(!hits.some(relevant))try{hits=[...new Map([...hits,...(await imdbTitleSearch(row.title,'movie',fetcher,hit=>titleScore(row.title,hit.name)>0&&relevant(hit))).filter(x=>titleScore(row.title,x.name)>0)].map(x=>[x.id,x])).values()];}catch(e){warnings.push('IMDb title search: '+row.title+': '+e.message);}
+      searchCache[key]={hits:[...new Map([...hits.filter(relevant),...(cached?.hits||[]),...hits].map(x=>[x.id,x])).values()].slice(0,20),checkedAt,schemaVersion:SEARCH_SCHEMA,checkedYear:row.ottReleaseDate.slice(0,4)};return [...hits.filter(relevant),...hits.filter(x=>!relevant(x))].slice(0,8);
     })());
-    return searchPromises.get(key);
+    return searchPromises.get(promiseKey);
   }
   async function getMeta(hit) {
-    const cached=metaCache[hit.id];if(stamp(cached,now,WEEK))return cached;
+    const cached=metaCache[hit.id];if(stamp(cached,now,WEEK))return {...cached,name:cached.name||hit.name,year:cached.year||hit.year,poster:hit.identitySource==='IMDb public title suggestions'?(hit.poster||cached.poster):(cached.poster||hit.poster),cast:cached.cast?.length?cached.cast:hit.cast||[]};
     if(failedMetadata.has(hit.id)){
       warnings.push(`Cached lookup failure: ${hit.id}: ${failedMetadata.get(hit.id)}`);
       return cached||{...hit,type:'movie',countries:[],cast:[],directors:[],released:null};
@@ -172,7 +198,7 @@ export async function refreshFromOtt(previous={},options={}) {
       try{
         const data=await (await response(`https://v3-cinemeta.strem.io/meta/movie/${hit.id}.json`,fetcher)).json();
         if(!data.meta||data.meta.id!==hit.id)throw new Error('Invalid film identity response');
-        const result=metadata(data.meta,checkedAt);metaCache[hit.id]=result;return result;
+        const result=metadata({...hit,...data.meta,name:data.meta.name||hit.name,year:data.meta.year||hit.year,poster:data.meta.poster||hit.poster,cast:data.meta.cast?.length?data.meta.cast:hit.cast||[]},checkedAt);metaCache[hit.id]=result;return result;
       }catch(error){
         warnings.push(`${hit.id}: ${String(error.message||error).slice(0,100)}`);
         return cached||{...hit,type:'movie',countries:[],cast:[],directors:[],released:null};
@@ -181,25 +207,33 @@ export async function refreshFromOtt(previous={},options={}) {
     return metaPromises.get(hit.id);
   }
   let done=0;
-  const resolved=(await parallelMap(eligible,4,async row=>{
+  const groups=(await parallelMap(eligible,4,async row=>{
     try{
       const confirmed=confirmedRelease(row);
-      const hits=(await search(row)).filter(x=>titleScore(row.title,x.name)>0&&(!row.movieYearHint||!x.year||x.year===row.movieYearHint)&&(!confirmed||x.id===confirmed.id)).slice(0,3);
-      const matches=[];
+      let found=await search(row);
+      if(confirmed?.ignoredTmdbId){
+        if(!confirmedProofs.has(confirmed.id))confirmedProofs.set(confirmed.id,imdbTitleSearch(confirmed.title,'movie',fetcher,x=>x.id===confirmed.id));
+        const proof=await confirmedProofs.get(confirmed.id);found=[...new Map([...found,...proof].map(x=>[x.id,x])).values()];
+      }
+      const hits=found.filter(x=>titleScore(row.title,x.name)>0&&(!row.movieYearHint||!x.year||x.year===row.movieYearHint)&&(!confirmed||x.id===confirmed.id)).slice(0,8);
+      const matches=[];let staleListing=false;
       for(const hit of hits){
+        if(hit.year&&Number(row.ottReleaseDate.slice(0,4))-Number(hit.year)>1){staleListing=true;continue;}
+        if(hit.year&&Number(hit.year)>Number(row.ottReleaseDate.slice(0,4)))continue;
         const meta=await getMeta(hit);
         if(confirmed&&!confirmedIdentity(row,meta))continue;
         if(meta.type!=='movie'||(meta.year&&Number(meta.year)>Number(row.ottReleaseDate.slice(0,4)))||(row.movieYearHint&&meta.year&&row.movieYearHint!==meta.year))continue;
+        if(meta.year&&Number(row.ottReleaseDate.slice(0,4))-Number(meta.year)>1){staleListing=true;continue;}
         const castText=normalize(row.castText),castMatches=[...(meta.cast||[]),...(meta.directors||[])].filter(x=>normalize(x).length>=4&&castText.includes(normalize(x))).length;
         matches.push({row,meta,titleScore:titleScore(row.title,meta.name),castMatches,score:titleScore(row.title,meta.name)+Math.min(castMatches,4)*15});
       }
       matches.sort((a,b)=>b.score-a.score);
-      if(!matches.length){record(row,'no_matching_movie_id');return null;}
-      if(matches.length>1&&matches[0].score===matches[1].score){record(row,'ambiguous_movie_match');return null;}
-      return matches[0];
+      if(!matches.length){record(row,staleListing?'older_film_relisted_as_new':'no_matching_movie_id');return null;}
+      return matches;
     }catch(error){warnings.push(`${row.title}: ${String(error.message||error).slice(0,100)}`);record(row,'movie_lookup_failed');return null;}
     finally{done++;if(done%25===0)options.onProgress?.(`Matched ${done}/${eligible.length} source candidates`);}
   })).filter(Boolean);
+  const resolved=groups.flat();
   const ids=[...new Set(resolved.map(x=>x.meta.id))];
   const pending=ids.filter(id=>!stamp(identities[id],now,identities[id]?.languages.length?WEEK:SIX_HOURS));
   const batches=[];for(let i=0;i<pending.length;i+=70)batches.push(pending.slice(i,i+70));
@@ -230,13 +264,23 @@ export async function refreshFromOtt(previous={},options={}) {
     finally{checkedOriginalCount++;if(checkedOriginalCount%25===0)options.onProgress?.(`Original-language checks ${checkedOriginalCount}/${needFacts.size}`);}
   });
   options.onProgress?.(`Checked original-language fallback for ${needFacts.size} Indian films`);
+  const selected=[];
+  for(const matches of groups){
+    const assessed=matches.map(match=>({match,result:assessFilm(match.row,match,identities[match.meta.id],originalCache[match.meta.tmdbId])}));
+    const valid=assessed.filter(x=>!x.result.reason).map(x=>x.match).sort((a,b)=>b.score-a.score);
+    if(!valid.length){record(matches[0].row,assessed[0].result.reason);continue;}
+    if(valid[1]?.score===valid[0].score){record(matches[0].row,'ambiguous_movie_match');continue;}
+    selected.push(valid[0]);
+  }
   const byId=new Map();let acceptedListingCount=0;
-  for(const match of resolved){
+  for(const match of selected){
     const {row,meta}=match,assessment=assessFilm(row,match,identities[meta.id],originalCache[meta.tmdbId]);
     if(assessment.reason){record(row,assessment.reason);continue;}
     acceptedListingCount++;
     const languages=assessment.originalLanguages.map(x=>LANGUAGES[x]||'Other');
-    const posters=[...new Set([meta.poster,`https://images.metahub.space/poster/small/${meta.id}/img`,originalCache[meta.tmdbId]?.poster].filter(Boolean))];
+    const correction=confirmedIdentity(row,meta);
+    const pagePoster=correction?.ignoredTmdbId&&correction.ignoredTmdbId===meta.tmdbId?null:originalCache[meta.tmdbId]?.poster;
+    const posters=[...new Set([meta.poster,`https://images.metahub.space/poster/small/${meta.id}/img`,pagePoster].filter(Boolean))];
     const listing={sourceName:row.sourceName||'OTTReleaseMovies',sourceUrl:row.sourceUrl,title:row.title,ottReleaseDate:row.ottReleaseDate,platforms:row.platforms,providerUrl:row.providerUrl,dateYearInferred:row.dateYearInferred,castEvidenceUrl:row.castEvidenceUrl};
     const old=byId.get(meta.id);
     if(old){
@@ -266,9 +310,9 @@ export async function refreshFromOtt(previous={},options={}) {
   const movies=newestFirst([...byId.values()]);
   if(!movies.length)throw new Error('No verified films from release source; preserving the last successful catalog');
   const keep=new Set(ids),searchKeys=new Set(eligible.map(x=>titleKey(x.title)));
-  return {version:VERSION,checkedAt,releaseTimeZone:RELEASE_TIME_ZONE,movies,candidateCount:eligible.length,sourceRowCount:source.rows.length,sourceName:SOURCE_NAME,sourceUrl:SOURCE_URL,sourceUrls:SOURCES.map(x=>x.url),sortOrder:'source_ott_release_date_desc',datePolicy:'earliest_reported_telugu_ott_date',acceptedListingCount,duplicatesMerged:acceptedListingCount-movies.length,releaseDateConflictCount:movies.filter(x=>x.releaseDateConflicts.length).length,sourceStatus:(source.statuses||[]).map(x=>({...x,movieCount:movies.filter(m=>m.sourceNames.includes(x.name)).length})),sourceSnapshots:source.snapshots||previous.sourceSnapshots||{},coverageWindowStart:source.windowStart||null,coverageHistoryDays:source.historyDays||null,counts,refreshWarnings:warnings,audit,
-    sourceProviderFactsCache:providerEvidence.cache,sourceSearchCache:Object.fromEntries(Object.entries(searchCache).filter(([k])=>searchKeys.has(k))),sourceMetadataCache:Object.fromEntries(Object.entries(metaCache).filter(([id])=>keep.has(id))),identities:Object.fromEntries(Object.entries(identities).filter(([id])=>keep.has(id))),sourceOriginalLanguageCache:Object.fromEntries(Object.entries(originalCache).filter(([id])=>needFacts.has(id))),
-    limits:['OTT dates and Telugu audio are reported by OTTReleaseMovies, Trendraja, Sacnilk and 123telugu; actual audio tracks and regional subscriptions are not inspected.','Discovery covers a rolling 365 days of release listings. Older archive rows are not part of this latest-releases catalog. Future and tentative dates, series, non-Telugu originals and non-Indian films are excluded.','Duplicate film IDs are merged. Sorting uses the earliest reported Telugu OTT date across accepted listings; conflicting platform dates remain visible in coverage data.','Original language uses Wikidata or the matching TMDB public movie page; an explicit publisher original-language label is the final fallback. Telugu must be a confirmed original language. Unknown or conflicting originals are excluded.','Film identities use Cinemeta title, cast where listed, country and year checks. Unmatched or ambiguous titles remain excluded and are reported in coverage data.','A failed source uses its last successful recent snapshot while other sources update. If all release sources fail, publication stops and the previous deployment is preserved.','SV Telugu OTT returned HTTP 403 to automated requests during validation and is not an active source. Combined coverage is not a guarantee of every platform or every Telugu original.']};
+  return {version:VERSION,checkedAt,releaseTimeZone:RELEASE_TIME_ZONE,movies,candidateCount:eligible.length,sourceRowCount:source.rows.length,sourceName:SOURCE_NAME+' + ZEE5 official + Aha official + 91mobiles movies',sourceUrl:SOURCE_URL,sourceUrls:[...SOURCES,...OFFICIAL_SOURCES,NINETYONE_MOVIES].map(x=>x.url),sortOrder:'source_ott_release_date_desc',datePolicy:'earliest_reported_telugu_ott_date',acceptedListingCount,duplicatesMerged:acceptedListingCount-movies.length,releaseDateConflictCount:movies.filter(x=>x.releaseDateConflicts.length).length,sourceStatus:(source.statuses||[]).map(x=>({...x,movieCount:movies.filter(m=>m.sourceNames.includes(x.name)).length})),sourceSnapshots:source.snapshots||previous.sourceSnapshots||{},coverageWindowStart:source.windowStart||null,coverageHistoryDays:source.historyDays||null,counts,refreshWarnings:warnings,audit,
+    officialDetailCache,sourceProviderFactsCache:providerEvidence.cache,sourceSearchCache:Object.fromEntries(Object.entries(searchCache).filter(([k])=>searchKeys.has(k))),sourceMetadataCache:Object.fromEntries(Object.entries(metaCache).filter(([id])=>keep.has(id))),identities:Object.fromEntries(Object.entries(identities).filter(([id])=>keep.has(id))),sourceOriginalLanguageCache:Object.fromEntries(Object.entries(originalCache).filter(([id])=>needFacts.has(id))),
+    limits:['Release evidence combines publisher tables, 91mobiles movie cards, and public ZEE5/Aha metadata. Actual audio tracks and regional subscriptions are not inspected.','Discovery uses the accessible source archives with bounded pagination; there is no one-year release cutoff. Future and tentative dates, series, non-Telugu originals and non-Indian films are excluded.','Duplicate film IDs are merged. Sorting uses the earliest reported Telugu OTT date across accepted listings; conflicting platform dates remain visible in coverage data.','Original language uses Wikidata or the matching TMDB public movie page; an explicit publisher original-language label is the final fallback. Telugu must be a confirmed original language. Unknown or conflicting originals are excluded.','Film identities use Cinemeta, IMDb public suggestions, cast where listed, country consistency and year checks. Older-film relistings more than one calendar year after the film year are excluded from new-release dates. Unmatched or ambiguous titles remain excluded and are reported in coverage data.','A failed source uses its last successful recent snapshot while other sources update. If all release sources fail, publication stops and the previous deployment is preserved.','SV Telugu OTT returned HTTP 403 to automated requests during validation and is not an active source. Combined coverage is not a guarantee of every platform or every Telugu original.']};
 }
 
 

@@ -1,63 +1,63 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "releaseTimeZone": "Asia/Kolkata",
-  "checkedAt": "2026-10-30T02:47:50.064Z",
+  "checkedAt": "2026-10-30T03:41:49.868Z",
   "stale": false,
-  "verifiedMovieCount": 118,
+  "verifiedMovieCount": 662,
   "datePolicy": "earliest_reported_telugu_ott_date",
-  "coverageWindowStart": "2025-10-30",
+  "coverageWindowStart": null,
   "sources": [
     {
       "key": "ottreleasemovies",
       "name": "OTTReleaseMovies",
       "url": "https://ottreleasemovies.com/",
       "state": "ok",
-      "checkedAt": "2026-10-30T02:47:50.064Z",
+      "checkedAt": "2026-10-30T03:11:04.256Z",
       "rowCount": 251,
       "rawRowCount": 252,
       "pagesFetched": 1,
       "pagesAvailable": 1,
       "errors": [],
-      "movieCount": 29
+      "movieCount": 31
     },
     {
       "key": "trendraja",
       "name": "Trendraja",
       "url": "https://trendraja.in/telugu-movie-ott-release-dates-2021/",
       "state": "ok",
-      "checkedAt": "2026-10-30T02:47:50.064Z",
-      "rowCount": 243,
+      "checkedAt": "2026-10-30T03:11:04.256Z",
+      "rowCount": 1147,
       "rawRowCount": 1147,
       "pagesFetched": 1,
       "pagesAvailable": 1,
       "errors": [],
-      "movieCount": 94
+      "movieCount": 596
     },
     {
       "key": "sacnilk",
       "name": "Sacnilk",
       "url": "https://www.sacnilk.com/ott-movie-releases",
       "state": "ok",
-      "checkedAt": "2026-10-30T02:47:50.064Z",
-      "rowCount": 377,
-      "rawRowCount": 420,
-      "pagesFetched": 21,
+      "checkedAt": "2026-10-30T03:11:04.256Z",
+      "rowCount": 476,
+      "rawRowCount": 483,
+      "pagesFetched": 25,
       "pagesAvailable": 25,
       "errors": [],
-      "movieCount": 63
+      "movieCount": 71
     },
     {
       "key": "123telugu",
       "name": "123telugu",
       "url": "https://www.123telugu.com/mnews/latest-telugu-movie-theatrical-and-ott-release-dates-list.html",
       "state": "ok",
-      "checkedAt": "2026-10-30T02:47:50.064Z",
+      "checkedAt": "2026-10-30T03:11:04.256Z",
       "rowCount": 13,
       "rawRowCount": 13,
       "pagesFetched": 1,
       "pagesAvailable": 1,
       "errors": [],
-      "movieCount": 2
+      "movieCount": 3
     },
     {
       "key": "svteluguott",
@@ -67,205 +67,230 @@
       "rowCount": 0,
       "error": "Automated access returned HTTP 403 during validation on 2026-10-23; no verified live adapter is enabled.",
       "movieCount": 0
+    },
+    {
+      "key": "zee5-official",
+      "name": "ZEE5 official",
+      "url": "https://www.zee5.com/web-series/lang/telugu",
+      "state": "ok",
+      "checkedAt": "2026-10-30T03:11:04.256Z",
+      "rowCount": 479,
+      "pagesFetched": 3,
+      "errors": [],
+      "coverage": "Only metadata visible in public server-rendered pages; full platform libraries are not guaranteed.",
+      "movieCount": 0
+    },
+    {
+      "key": "aha-official",
+      "name": "Aha official",
+      "url": "https://www.aha.video/",
+      "state": "partial",
+      "checkedAt": "2026-10-30T03:11:04.256Z",
+      "rowCount": 12,
+      "pagesFetched": 3,
+      "errors": [
+        "Vasudheva Sutham: Aha Telugu language evidence missing\n",
+        "The Dark Heaven: Aha Telugu language evidence missing\n",
+        "Khalifa - The Ruler: Aha Telugu language evidence missing\n",
+        "Deewana: Aha Telugu language evidence missing\n",
+        "Hushar Pittalu: Aha Telugu language evidence missing\n",
+        "Sweety Naughty Crazy: Aha Telugu language evidence missing\n",
+        "Dhoolpet Police Station: Aha Telugu language evidence missing\n",
+        "Iruttarai: Aha Telugu language evidence missing\n",
+        "Chef Mantra: Aha detail identity is missing or ambiguous\n",
+        "Aakali Rajyam: Aha detail identity is missing or ambiguous\n",
+        "Unstoppable: Aha detail identity is missing or ambiguous\n",
+        "Telugu Indian Idol: Aha detail identity is missing or ambiguous\n",
+        "SARKAAR: Aha detail identity is missing or ambiguous\n",
+        "35 Chinna Vishayam Illa: Aha Telugu language evidence missing\n",
+        "Kurangu Pedal: Aha Telugu language evidence missing\n",
+        "Shot Boot Three: Aha Telugu language evidence missing\n",
+        "Kida: Aha Telugu language evidence missing\n",
+        "Sachin: A Billion Dreams: Aha Telugu language evidence missing\n",
+        "Rocket Driver: Aha Telugu language evidence missing\n",
+        "Maha Ganesha: Aha detail identity is missing or ambiguous\n",
+        "Samatha Kumbh 2024: Aha detail identity is missing or ambiguous\n"
+      ],
+      "coverage": "Only metadata visible in public server-rendered pages; full platform libraries are not guaranteed.",
+      "movieCount": 5
+    },
+    {
+      "key": "91mobiles-movies",
+      "name": "91mobiles movies",
+      "url": "https://www.91mobiles.com/entertainment/new-telugu-movies",
+      "state": "partial",
+      "checkedAt": "2026-10-30T03:11:04.256Z",
+      "rowCount": 698,
+      "pagesFetched": 40,
+      "pagesAvailable": 140,
+      "errors": [
+        "Pagination capped at the newest 40 pages; older archives are outside the scanned pages."
+      ],
+      "movieCount": 424
     }
   ],
   "platformCounts": {
-    "Prime Video": 42,
-    "Netflix": 21,
-    "ETV Win": 16,
-    "Aha": 20,
-    "Sun NXT": 15,
-    "ZEE5": 7,
-    "SonyLIV": 1,
-    "JioHotstar": 8,
-    "Lionsgate Play": 1
+    "Prime Video": 266,
+    "Netflix": 87,
+    "ETV Win": 69,
+    "Aha": 208,
+    "Sun NXT": 35,
+    "ZEE5": 38,
+    "JioHotstar": 63,
+    "SonyLIV": 11,
+    "Lionsgate Play": 5,
+    "JioCinema": 1,
+    "YouTube": 1
   },
   "exclusions": {
-    "not_a_movie": 74,
-    "telugu_audio_not_listed": 209,
+    "not_a_movie": 245,
+    "telugu_audio_not_listed": 437,
     "tentative_or_subtitles_only": 2,
     "non_indian_language": 15,
-    "missing_ott_date": 4,
+    "missing_ott_date": 363,
     "upcoming": 4,
-    "no_matching_movie_id": 77,
-    "ambiguous_movie_match": 46,
-    "country_conflict": 3,
-    "not_original_telugu": 177,
-    "original_language_unconfirmed": 8,
-    "non_indian_film": 53,
-    "indian_origin_unconfirmed": 6,
-    "cast_mismatch": 8,
-    "title_mismatch": 6,
-    "identity_conflict": 1
+    "no_matching_movie_id": 190,
+    "older_film_relisted_as_new": 111,
+    "movie_lookup_failed": 3,
+    "not_original_telugu": 330,
+    "cast_mismatch": 44,
+    "original_language_unconfirmed": 45,
+    "non_indian_film": 74,
+    "title_variant_uncorroborated": 2,
+    "country_conflict": 22,
+    "title_mismatch": 23,
+    "original_language_conflict": 7,
+    "identity_conflict": 3,
+    "ambiguous_movie_match": 2,
+    "ambiguous_identity": 2,
+    "original_language_identity_conflict": 2
   },
-  "refreshWarnings": [],
+  "refreshWarnings": [
+    "Oh Bhama Ayyo Rama: Cached lookup failure: Metadata HTTP 504",
+    "Jinn - The Pet (Telugu): Cached lookup failure: Metadata HTTP 504",
+    "Oh Bhama Ayyo Rama: Cached lookup failure: Metadata HTTP 504",
+    "Cached lookup failure: tt15310668: Metadata HTTP 504",
+    "Cached lookup failure: tt15263698: The operation was aborted due to timeout",
+    "Cached lookup failure: tt9760426: The operation was aborted due to timeout",
+    "Cached lookup failure: tt13262002: Metadata HTTP 504",
+    "TMDB 1569956: Unrecognized original language",
+    "TMDB 1157265: Unrecognized original language",
+    "TMDB 1291787: Unrecognized original language",
+    "TMDB 1291785: Unrecognized original language"
+  ],
   "limits": [
-    "OTT dates and Telugu audio are reported by OTTReleaseMovies, Trendraja, Sacnilk and 123telugu; actual audio tracks and regional subscriptions are not inspected.",
-    "Discovery covers a rolling 365 days of release listings. Older archive rows are not part of this latest-releases catalog. Future and tentative dates, series, non-Telugu originals and non-Indian films are excluded.",
+    "Release evidence combines publisher tables, 91mobiles movie cards, and public ZEE5/Aha metadata. Actual audio tracks and regional subscriptions are not inspected.",
+    "Discovery uses the accessible source archives with bounded pagination; there is no one-year release cutoff. Future and tentative dates, series, non-Telugu originals and non-Indian films are excluded.",
     "Duplicate film IDs are merged. Sorting uses the earliest reported Telugu OTT date across accepted listings; conflicting platform dates remain visible in coverage data.",
     "Original language uses Wikidata or the matching TMDB public movie page; an explicit publisher original-language label is the final fallback. Telugu must be a confirmed original language. Unknown or conflicting originals are excluded.",
-    "Film identities use Cinemeta title, cast where listed, country and year checks. Unmatched or ambiguous titles remain excluded and are reported in coverage data.",
+    "Film identities use Cinemeta, IMDb public suggestions, cast where listed, country consistency and year checks. Older-film relistings more than one calendar year after the film year are excluded from new-release dates. Unmatched or ambiguous titles remain excluded and are reported in coverage data.",
     "A failed source uses its last successful recent snapshot while other sources update. If all release sources fail, publication stops and the previous deployment is preserved.",
     "SV Telugu OTT returned HTTP 403 to automated requests during validation and is not an active source. Combined coverage is not a guarantee of every platform or every Telugu original."
   ],
-  "durationSeconds": 26.018,
+  "checkedCases": [
+    "Maremma",
+    "EPIC - First Semester",
+    "Kaagitham Padavalu",
+    "SI Yugandhar",
+    "1984 namesake excluded",
+    "2021 re-listing correctly dated"
+  ],
   "examples": [
     {
       "id": "tt32089596",
       "name": "Comrade Kalyan",
       "year": "2026",
-      "ottReleaseDate": "2026-10-30",
-      "platforms": [
-        "Prime Video"
-      ],
-      "originalLanguage": [
-        "Telugu"
-      ],
-      "originalLanguageEvidence": "TMDB public original-language field"
+      "ottReleaseDate": "2026-10-30"
     },
     {
       "id": "tt31841170",
       "name": "Don't Trouble the Trouble",
       "year": "2026",
-      "ottReleaseDate": "2026-10-30",
-      "platforms": [
-        "Netflix"
-      ],
-      "originalLanguage": [
-        "Telugu"
-      ],
-      "originalLanguageEvidence": "TMDB public original-language field"
+      "ottReleaseDate": "2026-10-30"
+    },
+    {
+      "id": "tt47421307",
+      "name": "SI Yugandhar",
+      "year": "2026",
+      "ottReleaseDate": "2026-10-30"
     },
     {
       "id": "tt43407940",
       "name": "Thella Kaagitham",
       "year": "2026",
-      "ottReleaseDate": "2026-10-29",
-      "platforms": [
-        "ETV Win"
-      ],
-      "originalLanguage": [
-        "Telugu"
-      ],
-      "originalLanguageEvidence": "TMDB public original-language field"
+      "ottReleaseDate": "2026-10-29"
     },
     {
-      "id": "tt42602688",
-      "name": "Na Wife Missing",
+      "id": "tt39281522",
+      "name": "Fight Maha",
       "year": "2026",
-      "ottReleaseDate": "2026-10-22",
-      "platforms": [
-        "Aha"
-      ],
-      "originalLanguage": [
-        "Telugu"
-      ],
-      "originalLanguageEvidence": "TMDB public original-language field"
+      "ottReleaseDate": "2026-10-22"
     },
     {
       "id": "tt31969655",
       "name": "The Paradise",
       "year": "2026",
-      "ottReleaseDate": "2026-10-22",
-      "platforms": [
-        "Netflix"
-      ],
-      "originalLanguage": [
-        "Telugu"
-      ],
-      "originalLanguageEvidence": "TMDB public original-language field"
+      "ottReleaseDate": "2026-10-22"
     },
     {
-      "id": "tt39558804",
-      "name": "Sugriva",
+      "id": "tt42602688",
+      "name": "Na Wife Missing",
       "year": "2026",
-      "ottReleaseDate": "2026-10-16",
-      "platforms": [
-        "Aha"
-      ],
-      "originalLanguage": [
-        "Telugu"
-      ],
-      "originalLanguageEvidence": "TMDB public original-language field"
+      "ottReleaseDate": "2026-10-21"
+    },
+    {
+      "id": "tt45382318",
+      "name": "Kaagitham Padavalu",
+      "year": "2026",
+      "ottReleaseDate": "2026-10-16"
     },
     {
       "id": "tt43383993",
       "name": "Vasudheva Sutham",
       "year": "2026",
-      "ottReleaseDate": "2026-10-16",
-      "platforms": [
-        "Aha"
-      ],
-      "originalLanguage": [
-        "Telugu"
-      ],
-      "originalLanguageEvidence": "TMDB public original-language field"
+      "ottReleaseDate": "2026-10-16"
+    },
+    {
+      "id": "tt39558804",
+      "name": "Sugriva",
+      "year": "2026",
+      "ottReleaseDate": "2026-10-15"
+    },
+    {
+      "id": "tt35448218",
+      "name": "EPIC - The First Semester",
+      "year": "2026",
+      "ottReleaseDate": "2026-10-09"
+    },
+    {
+      "id": "tt37537243",
+      "name": "Maremma",
+      "year": "2026",
+      "ottReleaseDate": "2026-10-08"
     },
     {
       "id": "tt30050236",
       "name": "Mahendragiri Varahi",
       "year": "2026",
-      "ottReleaseDate": "2026-10-02",
-      "platforms": [
-        "Prime Video"
-      ],
-      "originalLanguage": [
-        "Telugu"
-      ],
-      "originalLanguageEvidence": "TMDB public original-language field"
+      "ottReleaseDate": "2026-10-02"
     },
     {
       "id": "tt41971399",
-      "name": "Romanchakam",
+      "name": "romanchakam",
       "year": "2026",
-      "ottReleaseDate": "2026-10-01",
-      "platforms": [
-        "Netflix"
-      ],
-      "originalLanguage": [
-        "Telugu"
-      ],
-      "originalLanguageEvidence": "TMDB public original-language field"
+      "ottReleaseDate": "2026-10-01"
     },
     {
       "id": "tt43635242",
       "name": "Ameer Log",
       "year": "2026",
-      "ottReleaseDate": "2026-09-30",
-      "platforms": [
-        "Aha",
-        "Sun NXT"
-      ],
-      "originalLanguage": [
-        "Telugu"
-      ],
-      "originalLanguageEvidence": "TMDB public original-language field"
+      "ottReleaseDate": "2026-09-30"
     },
     {
       "id": "tt41790460",
       "name": "Agadha",
       "year": "2026",
-      "ottReleaseDate": "2026-09-25",
-      "platforms": [
-        "ZEE5"
-      ],
-      "originalLanguage": [
-        "Telugu"
-      ],
-      "originalLanguageEvidence": "TMDB public original-language field"
-    },
-    {
-      "id": "tt43134711",
-      "name": "Ramba Oorvasi Menaka",
-      "year": "2026",
-      "ottReleaseDate": "2026-09-25",
-      "platforms": [
-        "Prime Video"
-      ],
-      "originalLanguage": [
-        "Telugu"
-      ],
-      "originalLanguageEvidence": "TMDB public original-language field"
+      "ottReleaseDate": "2026-09-25"
     }
   ]
 }

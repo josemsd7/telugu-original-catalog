@@ -17,8 +17,8 @@ export const compactSnapshots=snapshots=>Object.fromEntries(Object.entries(snaps
 
 export async function discoverSources(previous={},options={}) {
   const {parsePage}=options,fetcher=options.fetcher||fetch,now=options.now||Date.now();
-  const checkedAt=new Date(now).toISOString(),windowStart=indiaDate(now-365*DAY);
-  const recent=rows=>rows.filter(r=>!r.ottReleaseDate||r.ottReleaseDate>=windowStart);
+  const checkedAt=new Date(now).toISOString(),windowStart=null;
+  const recent=rows=>rows;
   const snapshots={},statuses=[];let fresh=0;
   async function page(source,url=source.url){
     const response=await fetcher(url,{headers:{Accept:'text/html','User-Agent':UA},signal:AbortSignal.timeout(30000)});
@@ -76,7 +76,7 @@ export async function discoverSources(previous={},options={}) {
   const rows=Object.values(snapshots).flatMap(s=>s.rows);
   if(!rows.length)throw new Error('Release sources returned no recent rows; preserving last successful catalog');
   if(!options.sources)statuses.push({key:'svteluguott',name:'SV Telugu OTT',url:'https://svteluguott.in/ott-movies',state:'disabled',rowCount:0,error:'Automated access returned HTTP 403 during validation on 2026-10-23; no verified live adapter is enabled.'});
-  return {freshSourceCount:fresh,rows,sourceRowCount:rows.length,snapshots:compactSnapshots(snapshots),statuses,windowStart,historyDays:365};
+  return {freshSourceCount:fresh,rows,sourceRowCount:rows.length,snapshots:compactSnapshots(snapshots),statuses,windowStart,historyDays:null};
 }
 
 

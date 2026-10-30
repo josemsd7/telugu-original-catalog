@@ -36,7 +36,7 @@ export function list91Url(start){
   return 'https://www.91mobiles.com/entertainment/web/list_ajax.php?'+new URLSearchParams({qp:'contentTypes:show~languages:65',sortOrder:'desc',sortBy:'ottReleaseDate',start:String(start),seoSlug:'/entertainment/new-telugu-web-series',pType:'new-telugu-web-series',dubbedVal:'notDubbed',type:start?'loadmore':'filter'});
 }
 export async function discover91(previous={},options={}){
-  const fetcher=options.fetcher||fetch,now=options.now||Date.now(),checkedAt=new Date(now).toISOString(),today=indiaDate(now),windowStart=indiaDate(now-365*86400000);
+  const fetcher=options.fetcher||fetch,now=options.now||Date.now(),checkedAt=new Date(now).toISOString(),today=indiaDate(now),windowStart='0001-01-01';
   const cache={...(previous.ninetyOneDetailCache||{})},old=previous.sourceSnapshots?.[NINETYONE.key],errors=[];
   const recent=x=>[x.ottReleaseDate,x.lastAiredDate].filter(Boolean).some(d=>d>=windowStart&&d<=today);
   async function request(url){const r=await fetcher(url,{headers:{Accept:'text/html,application/json;q=0.9','User-Agent':'TeluguOriginalCatalog/0.6 (factual metadata; https://github.com/josemsd7/telugu-original-catalog)'},signal:AbortSignal.timeout(30000)});if(!r.ok)throw new Error(`HTTP ${r.status}`);return r;}

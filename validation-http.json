@@ -1,52 +1,83 @@
 {
-  "checks": [
+  "checkedAt": "2026-10-30T03:57:15.674Z",
+  "result": "PASS",
+  "manifestVersion": "1.1.0",
+  "movies": 662,
+  "series": 155,
+  "cases": [
     {
-      "path": "manifest.json",
-      "status": 200,
-      "catalogs": 2
+      "id": "tt37537243",
+      "name": "Maremma",
+      "date": "2026-10-08",
+      "year": "2026"
     },
     {
-      "path": "catalog/movie/telugu-original-movies.json",
-      "status": 200,
-      "items": 100
+      "id": "tt35448218",
+      "name": "EPIC - The First Semester",
+      "date": "2026-10-09",
+      "year": "2026"
     },
     {
-      "path": "catalog/movie/telugu-original-movies/skip=100.json",
-      "status": 200,
-      "items": 18
+      "id": "tt45382318",
+      "name": "Kaagitham Padavalu",
+      "date": "2026-10-16",
+      "year": "2026"
     },
     {
-      "path": "catalog/movie/telugu-original-movies/skip=200.json",
-      "status": 200,
-      "items": 0
-    },
-    {
-      "path": "catalog/series/telugu-original-series.json",
-      "status": 200,
-      "items": 20
-    },
-    {
-      "path": "catalog/series/telugu-original-series/skip=100.json",
-      "status": 200,
-      "items": 0
+      "id": "tt47421307",
+      "name": "SI Yugandhar",
+      "date": "2026-10-30",
+      "year": "2026"
     }
   ],
-  "verifiedMovies": 118,
-  "verifiedSeries": 20,
+  "oldNamesakeExcluded": true,
+  "archivalTitleDate": "2021-04-16",
   "moviePosters": {
-    "total": 118,
-    "actualPosters": 117,
-    "fallbackPosters": 1,
+    "total": 662,
+    "actualPosters": 660,
+    "fallbackPosters": 2,
     "fallbackIds": [
-      "tt0320716"
+      "tt28251952",
+      "tt41030715"
     ],
-    "checkedAt": "2026-10-30T02:39:34.787Z"
+    "checkedAt": "2026-10-30T03:55:48.596Z"
   },
   "seriesPosters": {
-    "total": 20,
-    "actualPosters": 20,
-    "fallbackPosters": 0,
-    "fallbackIds": [],
-    "checkedAt": "2026-10-30T02:39:40.212Z"
+    "total": 155,
+    "actualPosters": 125,
+    "fallbackPosters": 30,
+    "fallbackIds": [
+      "tt30962086",
+      "tt30457355",
+      "tt18358308",
+      "tt30246098",
+      "tt39110720",
+      "tt27618285",
+      "tt17508872",
+      "tt39061146",
+      "tt21084160",
+      "tt18358232",
+      "tt39054341",
+      "tt39053762",
+      "tt13545730",
+      "tt21193634",
+      "tt15338090",
+      "tt39053834",
+      "tt39054276",
+      "tt12145820",
+      "tt12106682",
+      "tt12100078",
+      "tt12100156",
+      "tt22083550",
+      "tt12106076",
+      "tt12106134",
+      "tt12587540",
+      "tt12363362",
+      "tt12368910",
+      "tt12368964",
+      "tt12229544",
+      "tt9325578"
+    ],
+    "checkedAt": "2026-10-30T03:56:11.631Z"
   }
 }

@@ -2,6 +2,7 @@ import {mkdir,readFile,writeFile,readdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {pathToFileURL} from 'node:url';
 import {parallelMap} from './src/core.mjs';
+import {imdbTitleSearch} from './src/title-search.mjs';
 
 const MAX_BYTES=100000;
 const allowedHost=host=>['live.metahub.space','images.metahub.space','m.media-amazon.com','image.tmdb.org','images.tmdb.org','upload.wikimedia.org'].includes(host);
@@ -38,6 +39,10 @@ export async function cachePosters(data,destination,baseUrl,options={}) {
     let image;
     const candidates=[...new Set([...(movie.posterCandidates||[]),`https://images.metahub.space/poster/small/${movie.id}/img`,movie.poster].filter(Boolean))];
     for(const url of candidates){try{image=await imageBytes(url,fetcher);break;}catch{}}
+    if(!image)try{
+      const proof=await imdbTitleSearch(movie.canonicalName||movie.name,options.catalogType||'movie',fetcher,hit=>hit.id===movie.id);
+      for(const hit of proof)if(hit.poster){try{image=await imageBytes(hit.poster,fetcher);break;}catch{}}
+    }catch{}
     if(!image){image={bytes:fallback,extension:'png'};failures.push(movie.id);}
     const hash=createHash('sha256').update(image.bytes).digest('hex').slice(0,12);
     const name=`${movie.id}-${hash}.${image.extension}`;

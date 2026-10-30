@@ -54,6 +54,24 @@ def parse_list(html):
     button=next(root.all(lambda n:n.attrs.get('id')=='list-loadmore-btn'),None)
     return {'rows':rows,'totalRecords':int(button.attrs.get('data-total-records',len(rows))) if button else len(rows),
             'pageSize':int(button.attrs.get('data-num-records',24)) if button else 24}
+def parse_movie_list(html):
+    root=tree(html);rows=[]
+    for card in root.all(lambda n:n.has('pro_item') and n.has('card_box')):
+        heading=next(card.all(lambda n:n.tag=='h3'),None)
+        link=next(heading.all(lambda n:n.tag=='a' and re.fullmatch(r'/entertainment/[^/?#]+-movie-\d+',n.attrs.get('href',''))),None) if heading else None
+        if not link:continue
+        info=next(card.all(lambda n:n.has('imdb_box')),None)
+        date_line=next((p.text() for p in info.all(lambda n:n.tag=='p') if '|' in p.text()),'') if info else ''
+        if '(OTT)' not in date_line:continue
+        day=parse_date(date_line)
+        if not day:continue
+        text=card.text();cast=text.split('Top Cast',1)[1].split('Genres',1)[0].strip() if 'Top Cast' in text else ''
+        offer=text.split('Where To Stream',1)[1] if 'Where To Stream' in text else ''
+        names=[name for pattern,name in [(r'\bNetflix\b','Netflix'),(r'\bPrime Video\b','Prime Video'),(r'\bAha\b','Aha'),(r'\bZEE5\b','ZEE5'),(r'\bETV Win\b','ETV Win'),(r'\bJioHotstar\b','JioHotstar'),(r'\bSonyLIV\b','SonyLIV'),(r'\bSun NXT\b','Sun NXT')] if re.search(pattern,offer,re.I)]
+        native=date_line.split('|')[0].strip()
+        rows.append({'title':link.text(),'ottReleaseDate':day,'genreText':'Movie','languageText':'Direct Telugu' if native=='Telugu' else native,'castText':cast,'platforms':names,'sourceUrl':urljoin(BASE,link.attrs['href']),'sourceName':'91mobiles movies','sourceKey':'91mobiles-movies','audioEvidence':'91mobiles dated OTT card with language and cast','publisherLanguageEvidence':'91mobiles title language field','tentative':False})
+    button=next(root.all(lambda n:n.attrs.get('id')=='list-loadmore-btn'),None)
+    return {'rows':rows,'totalRecords':int(button.attrs.get('data-total-records',0)) if button else 0,'pageSize':24}
 def objects(value):
     if isinstance(value,list):
         for v in value:yield from objects(v)
@@ -91,6 +109,6 @@ def parse_detail(html):
     return {'title':title,'sourceUrl':safe_url(canonical),'originalLanguageText':original,'castText':cast,
             'teluguPlatforms':list(dict.fromkeys(telugu)),'listedAudioLanguages':list(dict.fromkeys(languages)),'episodes':episodes}
 if __name__=='__main__':
-    try:print(json.dumps((parse_detail if sys.argv[1]=='detail' else parse_list)(sys.stdin.read()),ensure_ascii=False))
+    try:print(json.dumps({'detail':parse_detail,'list':parse_list,'movie-list':parse_movie_list}[sys.argv[1]](sys.stdin.read()),ensure_ascii=False))
     except Exception as e:print(str(e),file=sys.stderr);sys.exit(1)
 
