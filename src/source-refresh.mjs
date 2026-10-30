@@ -101,6 +101,7 @@ function matchingPageTitle(a,b) {
 
 export function assessFilm(row,match,identity,facts) {
   const meta=match.meta;
+  if((row.requiresFilmYearForDate||['etv-official','sun-official'].includes(row.sourceKey))&&!meta.year)return {reason:'film_year_unconfirmed_for_platform_date'};
   const confirmed=confirmedIdentity(row,meta);
   if(confirmed?.ignoredTmdbId&&confirmed.ignoredTmdbId===meta.tmdbId)facts=undefined;
   if(identity?.items.length>1)return {reason:'ambiguous_identity'};
@@ -113,16 +114,18 @@ export function assessFilm(row,match,identity,facts) {
   if(meta.cast?.length&&row.castText&&match.castMatches===0)return {reason:'cast_mismatch'};
   if(match.titleScore===0)return {reason:'title_mismatch'};
   if(match.titleScore<80&&match.castMatches===0&&!row.movieYearHint)return {reason:'title_variant_uncorroborated'};
+  if(row.providerOriginalLanguageConflict)return {reason:'original_language_conflict'};
   const confirmedLanguages=confirmed?.originalLanguages||[];
-  const hint=languageHint(row),wikiLanguages=identity?.languages||[],pageLanguages=facts?.languageIds||[];
+  const hint=languageHint(row),wikiLanguages=identity?.languages||[],pageLanguages=facts?.languageIds||[],providerLanguages=row.providerOriginalLanguageIds||[];
   if(wikiLanguages.length&&pageLanguages.some(id=>!wikiLanguages.includes(id)))return {reason:'original_language_conflict'};
   if(confirmedLanguages.length&&[...wikiLanguages,...pageLanguages].some(id=>!confirmedLanguages.includes(id)))return {reason:'original_language_conflict'};
-  const languages=wikiLanguages.length?wikiLanguages:pageLanguages.length?pageLanguages:confirmedLanguages;
+  if(providerLanguages.length&&[wikiLanguages,pageLanguages,confirmedLanguages].some(ids=>ids.length&&providerLanguages.some(id=>!ids.includes(id))))return {reason:'original_language_conflict'};
+  const languages=wikiLanguages.length?wikiLanguages:pageLanguages.length?pageLanguages:confirmedLanguages.length?confirmedLanguages:providerLanguages;
   if(hint&&languages.length&&!languages.includes(hint))return {reason:'original_language_conflict'};
   const originalLanguages=languages.length?languages:hint?[hint]:[];
   if(!originalLanguages.length)return {reason:'original_language_unconfirmed'};
   if(!originalLanguages.includes('Q8097'))return {reason:'not_original_telugu'};
-  return {reason:null,originalLanguages,originalEvidence:wikiLanguages.length?'Wikidata original-language metadata':pageLanguages.length?'TMDB public original-language field':confirmedLanguages.length?confirmed.sourceName:'Publisher explicit original-language label',originalSourceUrl:!wikiLanguages.length?(pageLanguages.length?facts.sourceUrl:confirmed?.sourceUrl):undefined,countryEvidence:countries.includes('india')?'Cinemeta country metadata':identity?.countries.includes('Q668')?'Wikidata country metadata':facts?.countries?.includes('india')?'TMDB public countryOfOrigin field':'Country field unavailable; original Telugu language verified separately',countrySourceUrl:!countries.includes('india')&&!identity?.countries.includes('Q668')?facts?.sourceUrl:undefined};
+  return {reason:null,originalLanguages,originalEvidence:wikiLanguages.length?'Wikidata original-language metadata':pageLanguages.length?'TMDB public original-language field':confirmedLanguages.length?confirmed.sourceName:providerLanguages.length?'Official platform explicit Original audio label':'Publisher explicit original-language label',originalSourceUrl:!wikiLanguages.length?(pageLanguages.length?facts.sourceUrl:confirmed?.sourceUrl||row.providerOriginalLanguageSourceUrl):undefined,countryEvidence:countries.includes('india')?'Cinemeta country metadata':identity?.countries.includes('Q668')?'Wikidata country metadata':facts?.countries?.includes('india')?'TMDB public countryOfOrigin field':'Country field unavailable; original Telugu language verified separately',countrySourceUrl:!countries.includes('india')&&!identity?.countries.includes('Q668')?facts?.sourceUrl:undefined};
 }
 
 async function response(url,fetcher) {
@@ -294,7 +297,7 @@ export async function refreshFromOtt(previous={},options={}) {
     const correction=confirmedIdentity(row,meta);
     const pagePoster=correction?.ignoredTmdbId&&correction.ignoredTmdbId===meta.tmdbId?null:originalCache[meta.tmdbId]?.poster;
     const posters=[...new Set([meta.poster,`https://images.metahub.space/poster/small/${meta.id}/img`,pagePoster].filter(Boolean))];
-    const listing={sourceName:row.sourceName||'OTTReleaseMovies',sourceUrl:row.sourceUrl,title:row.title,ottReleaseDate:row.ottReleaseDate,platforms:row.platforms,providerUrl:row.providerUrl,dateYearInferred:row.dateYearInferred,castEvidenceUrl:row.castEvidenceUrl};
+    const listing={sourceName:row.sourceName||'OTTReleaseMovies',sourceUrl:row.sourceUrl,title:row.title,ottReleaseDate:row.ottReleaseDate,platforms:row.platforms,providerUrl:row.providerUrl,dateYearInferred:row.dateYearInferred,castEvidenceUrl:row.castEvidenceUrl,metadataEvidence:row.officialMetadataEvidence};
     const old=byId.get(meta.id);
     if(old){
       old.platforms=[...new Set([...old.platforms,...row.platforms])];
@@ -312,6 +315,7 @@ export async function refreshFromOtt(previous={},options={}) {
     const dateCorrection=dateCorrections.get(movie.id);
     if(dateCorrection)movie.releaseDateCorrections=[dateCorrection];
     movie.sourceNames=[...new Set(movie.releaseListings.map(x=>x.sourceName))];
+    movie.metadataSourceNames=[...new Set(movie.releaseListings.flatMap(x=>(x.metadataEvidence||[]).map(e=>e.name)))];
     movie.releaseDateConflicts=movie.platforms.flatMap(platform=>{
       const entries=movie.releaseListings.filter(x=>x.platforms.includes(platform)),dates=[...new Set(entries.map(x=>x.ottReleaseDate))].sort();
       return dates.length>1?[{platform,dates}]:[];
@@ -319,6 +323,7 @@ export async function refreshFromOtt(previous={},options={}) {
     movie.description=`Earliest Telugu OTT date reported by these sources: ${movie.ottReleaseDate}${movie.platforms.length?' — '+movie.platforms.join(', '):''}. Original language: ${movie.genres.join(', ')}. Telugu audio is reported by ${movie.sourceNames.join(', ')}; audio tracks and regional availability are not independently checked.${movie.releaseDateConflicts.length?' Some sources report different dates; see the release source links.':''}`;
     const sources=[...new Map(movie.releaseListings.map(x=>[x.sourceUrl,x])).values()];
     movie.links=[...sources.map(x=>({name:x.sourceName,category:'OTT release source',url:x.sourceUrl})),...(movie.originalLanguageSourceUrl?[{name:'Original language',category:'Source',url:movie.originalLanguageSourceUrl}]:[])];
+    for(const evidence of movie.releaseListings.flatMap(x=>x.metadataEvidence||[]))if(!movie.links.some(x=>x.url===evidence.url))movie.links.push({name:evidence.name,url:evidence.url,category:'Official title metadata'});
     if(dateCorrection)movie.links.push({name:dateCorrection.sourceName,category:'Confirmed OTT date',url:dateCorrection.sourceUrl},{name:'Postponement announcement',category:'Release date correction',url:dateCorrection.postponementSourceUrl});
     for(const url of new Set(movie.releaseListings.map(x=>x.castEvidenceUrl).filter(Boolean)))if(!movie.links.some(x=>x.url===url))movie.links.push({name:'Platform title details',category:'Identity source',url});
     if(movie.countrySourceUrl&&!movie.links.some(x=>x.url===movie.countrySourceUrl))movie.links.push({name:'Country of origin',category:'Source',url:movie.countrySourceUrl});
@@ -326,9 +331,9 @@ export async function refreshFromOtt(previous={},options={}) {
   const movies=newestFirst([...byId.values()]);
   if(!movies.length)throw new Error('No verified films from release source; preserving the last successful catalog');
   const keep=new Set(ids),searchKeys=new Set(eligible.map(x=>titleKey(x.title)));
-  return {version:VERSION,checkedAt,releaseTimeZone:RELEASE_TIME_ZONE,movies,candidateCount:eligible.length,sourceRowCount:source.rows.length,sourceName:SOURCE_NAME+' + ZEE5 official + Aha official + 91mobiles movies',sourceUrl:SOURCE_URL,sourceUrls:[...SOURCES,...OFFICIAL_SOURCES,NINETYONE_MOVIES].map(x=>x.url),sortOrder:'source_ott_release_date_desc',datePolicy:'earliest_reported_telugu_ott_date',acceptedListingCount,duplicatesMerged:acceptedListingCount-movies.length,releaseDateConflictCount:movies.filter(x=>x.releaseDateConflicts.length).length,sourceStatus:(source.statuses||[]).map(x=>({...x,movieCount:movies.filter(m=>m.sourceNames.includes(x.name)).length})),sourceSnapshots:source.snapshots||previous.sourceSnapshots||{},coverageWindowStart:source.windowStart||null,coverageHistoryDays:source.historyDays||null,counts,refreshWarnings:warnings,audit,
+  return {version:VERSION,checkedAt,releaseTimeZone:RELEASE_TIME_ZONE,movies,candidateCount:eligible.length,sourceRowCount:source.rows.length,sourceName:SOURCE_NAME+' + official platform metadata + 91mobiles movies',sourceUrl:SOURCE_URL,sourceUrls:[...SOURCES,...OFFICIAL_SOURCES,NINETYONE_MOVIES].map(x=>x.url),sortOrder:'source_ott_release_date_desc',datePolicy:'earliest_reported_telugu_ott_date',acceptedListingCount,duplicatesMerged:acceptedListingCount-movies.length,releaseDateConflictCount:movies.filter(x=>x.releaseDateConflicts.length).length,sourceStatus:(source.statuses||[]).map(x=>({...x,movieCount:movies.filter(m=>m.sourceNames.includes(x.name)).length,metadataMovieCount:movies.filter(m=>m.metadataSourceNames.includes(x.name)).length})),sourceSnapshots:source.snapshots||previous.sourceSnapshots||{},coverageWindowStart:source.windowStart||null,coverageHistoryDays:source.historyDays||null,counts,refreshWarnings:warnings,audit,
     officialDetailCache,sourceProviderFactsCache:providerEvidence.cache,sourceSearchCache:Object.fromEntries(Object.entries(searchCache).filter(([k])=>searchKeys.has(k))),sourceMetadataCache:Object.fromEntries(Object.entries(metaCache).filter(([id])=>keep.has(id))),identities:Object.fromEntries(Object.entries(identities).filter(([id])=>keep.has(id))),sourceOriginalLanguageCache:Object.fromEntries(Object.entries(originalCache).filter(([id])=>needFacts.has(id))),
-    limits:['Release evidence combines publisher tables, 91mobiles movie cards, and public ZEE5/Aha metadata. Actual audio tracks and regional subscriptions are not inspected.','Discovery uses the accessible source archives with bounded pagination; there is no one-year release cutoff. Future and tentative dates, series, non-Telugu originals and non-Indian films are excluded.','Duplicate film IDs are merged. Sorting uses the earliest reported Telugu OTT date across accepted listings; conflicting platform dates remain visible in coverage data.','Original language uses Wikidata or the matching TMDB public movie page; an explicit publisher original-language label is the final fallback. Telugu must be a confirmed original language. Unknown or conflicting originals are excluded.','Film identities use Cinemeta, IMDb public suggestions, cast where listed, country consistency and year checks. Older-film relistings more than one calendar year after the film year are excluded from new-release dates. Unmatched or ambiguous titles remain excluded and are reported in coverage data.','A failed source uses its last successful recent snapshot while other sources update. If all release sources fail, publication stops and the previous deployment is preserved.','SV Telugu OTT returned HTTP 403 to automated requests during validation and is not an active source. Combined coverage is not a guarantee of every platform or every Telugu original.']};
+    limits:['Release evidence combines publisher tables, 91mobiles movie cards, and public metadata from ZEE5, Aha, Netflix, Prime Video, SonyLIV, ETV Win and Sun NXT. Actual audio tracks and regional subscriptions are not inspected.','Discovery uses the accessible source archives with bounded pagination; there is no one-year release cutoff. Future and tentative dates, series, non-Telugu originals and non-Indian films are excluded.','Duplicate film IDs are merged. Sorting uses the earliest reported Telugu OTT date across accepted listings; conflicting platform dates remain visible in coverage data.','Original language uses Wikidata, the matching TMDB public movie page, or explicit official Original audio labels; a publisher original-language label is the final fallback. Telugu must be a confirmed original language. Unknown or conflicting originals are excluded.','Film identities use Cinemeta, IMDb public suggestions, cast where listed, country consistency and year checks. Older-film relistings more than one calendar year after the film year are excluded from new-release dates. Unmatched or ambiguous titles remain excluded and are reported in coverage data.','A failed source uses its last successful recent snapshot while other sources update. If all release sources fail, publication stops and the previous deployment is preserved.','SV Telugu OTT returned HTTP 403 to automated requests during validation and is not an active source. Combined coverage is not a guarantee of every platform or every Telugu original.']};
 }
 
 

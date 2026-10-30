@@ -1,49 +1,62 @@
 {
-  "checkedAt": "2026-10-30T05:37:17.463Z",
+  "checkedAt": "2026-10-30T06:19:10.496Z",
   "result": "PASS",
-  "manifestVersion": "1.1.1",
-  "movies": 685,
+  "manifestVersion": "1.2.0",
+  "movies": 686,
   "series": 155,
-  "addedCount": 23,
-  "allAddedPostersVerified": true,
-  "cases": [
+  "officialSources": [
     {
-      "id": "tt28629017",
-      "name": "Mana ShankaraVaraprasad Garu",
-      "position": 105,
-      "date": "2026-02-11"
+      "key": "netflix-official",
+      "state": "partial",
+      "rowCount": 83,
+      "movieCount": 0,
+      "metadataMovieCount": 25
     },
     {
-      "id": "tt37537243",
-      "name": "Maremma",
-      "position": 12,
-      "date": "2026-10-08"
+      "key": "prime-official",
+      "state": "partial",
+      "rowCount": 40,
+      "movieCount": 0,
+      "metadataMovieCount": 12
     },
     {
-      "id": "tt35448218",
-      "name": "EPIC - The First Semester",
-      "position": 11,
-      "date": "2026-10-09"
+      "key": "sony-official",
+      "state": "ok",
+      "rowCount": 21,
+      "movieCount": 0,
+      "metadataMovieCount": 1
     },
     {
-      "id": "tt45382318",
-      "name": "Kaagitham Padavalu",
-      "position": 8,
-      "date": "2026-10-16"
+      "key": "etv-official",
+      "state": "partial",
+      "rowCount": 196,
+      "movieCount": 0,
+      "metadataMovieCount": 35
+    },
+    {
+      "key": "sun-official",
+      "state": "partial",
+      "rowCount": 200,
+      "movieCount": 15,
+      "metadataMovieCount": 25
+    },
+    {
+      "key": "jiohotstar-official",
+      "state": "unavailable",
+      "rowCount": 0,
+      "movieCount": 0,
+      "metadataMovieCount": 0
     }
   ],
-  "oldNamesakeExcluded": true,
-  "archivalTitleDate": "2021-04-16",
-  "postponedDateCorrected": "2026-02-26",
   "moviePosters": {
-    "total": 685,
-    "actualPosters": 683,
+    "total": 686,
+    "actualPosters": 684,
     "fallbackPosters": 2,
     "fallbackIds": [
       "tt41030715",
       "tt28251952"
     ],
-    "checkedAt": "2026-10-30T05:34:19.940Z"
+    "checkedAt": "2026-10-30T06:17:42.389Z"
   },
   "seriesPosters": {
     "total": 155,
@@ -51,9 +64,9 @@
     "fallbackPosters": 30,
     "fallbackIds": [
       "tt30962086",
-      "tt27618285",
-      "tt30457355",
       "tt18358308",
+      "tt30457355",
+      "tt27618285",
       "tt17508872",
       "tt39061146",
       "tt39054341",
@@ -62,25 +75,28 @@
       "tt18358232",
       "tt21084160",
       "tt39053762",
-      "tt13545730",
       "tt21193634",
       "tt15338090",
-      "tt39054276",
       "tt39053834",
+      "tt39054276",
+      "tt12145820",
       "tt12106682",
-      "tt12100078",
       "tt12100156",
       "tt22083550",
       "tt12106076",
       "tt12106134",
-      "tt12145820",
-      "tt9325578",
+      "tt12587540",
       "tt12363362",
       "tt12368910",
       "tt12368964",
-      "tt12587540",
-      "tt12229544"
+      "tt12100078",
+      "tt9325578",
+      "tt12229544",
+      "tt13545730"
     ],
-    "checkedAt": "2026-10-30T05:35:01.058Z"
-  }
+    "checkedAt": "2026-10-30T06:18:11.351Z"
+  },
+  "originalTeluguOnly": true,
+  "oldNamesakeExcluded": true,
+  "postponedDateCorrected": true
 }

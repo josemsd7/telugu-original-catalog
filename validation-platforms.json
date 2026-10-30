@@ -1,0 +1,89 @@
+{
+  "checkedAt": "2026-10-30T06:17:13.411Z",
+  "result": "PASS",
+  "version": "1.2.0",
+  "tests": 24,
+  "movies": 686,
+  "series": 155,
+  "allPreviousMoviesRetained": true,
+  "newestFirst": true,
+  "originalTeluguOnly": true,
+  "etvUnconfirmedUploadDatesExcluded": true,
+  "added": [
+    {
+      "id": "tt15202282",
+      "name": "Divya Drushti",
+      "date": "2025-12-19",
+      "releaseSources": [
+        "https://www.sunnxt.com/telugu-movie-divya-drushti-2025/detail/238635"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "key": "netflix-official",
+      "name": "Netflix official",
+      "state": "partial",
+      "rowCount": 83,
+      "releaseMovieCount": 0,
+      "metadataMovieCount": 25,
+      "limits": [
+        "Public detail scan capped at 120 of 973 new/expired titles this refresh; fresh cached records are reused and remaining titles are scanned on later refreshes."
+      ]
+    },
+    {
+      "key": "prime-official",
+      "name": "Prime Video official",
+      "state": "partial",
+      "rowCount": 40,
+      "releaseMovieCount": 0,
+      "metadataMovieCount": 12,
+      "limits": [
+        "Public detail scan capped at 45 of 114 new/expired titles this refresh; fresh cached records are reused and remaining titles are scanned on later refreshes."
+      ]
+    },
+    {
+      "key": "sony-official",
+      "name": "SonyLIV official",
+      "state": "ok",
+      "rowCount": 21,
+      "releaseMovieCount": 0,
+      "metadataMovieCount": 1,
+      "limits": []
+    },
+    {
+      "key": "etv-official",
+      "name": "ETV Win official",
+      "state": "partial",
+      "rowCount": 196,
+      "releaseMovieCount": 0,
+      "metadataMovieCount": 35,
+      "limits": [
+        "Public detail scan capped at 120 of 565 new/expired titles this refresh; fresh cached records are reused and remaining titles are scanned on later refreshes."
+      ]
+    },
+    {
+      "key": "sun-official",
+      "name": "Sun NXT official",
+      "state": "partial",
+      "rowCount": 200,
+      "releaseMovieCount": 15,
+      "metadataMovieCount": 25,
+      "limits": [
+        "Public detail scan capped at 100 of 1139 new/expired titles this refresh; fresh cached records are reused and remaining titles are scanned on later refreshes."
+      ]
+    },
+    {
+      "key": "jiohotstar-official",
+      "name": "JioHotstar official",
+      "state": "unavailable",
+      "rowCount": 0,
+      "releaseMovieCount": 0,
+      "metadataMovieCount": 0,
+      "limits": [
+        "https://www.hotstar.com/in: India catalog unavailable from this server region; returned the Disney Bundle page. Publisher JioHotstar listings remain active."
+      ]
+    }
+  ],
+  "metadataLinkedMovies": 97
+}
