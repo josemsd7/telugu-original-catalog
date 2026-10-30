@@ -1,0 +1,52 @@
+{
+  "checks": [
+    {
+      "path": "manifest.json",
+      "status": 200,
+      "catalogs": 2
+    },
+    {
+      "path": "catalog/movie/telugu-original-movies.json",
+      "status": 200,
+      "items": 100
+    },
+    {
+      "path": "catalog/movie/telugu-original-movies/skip=100.json",
+      "status": 200,
+      "items": 18
+    },
+    {
+      "path": "catalog/movie/telugu-original-movies/skip=200.json",
+      "status": 200,
+      "items": 0
+    },
+    {
+      "path": "catalog/series/telugu-original-series.json",
+      "status": 200,
+      "items": 20
+    },
+    {
+      "path": "catalog/series/telugu-original-series/skip=100.json",
+      "status": 200,
+      "items": 0
+    }
+  ],
+  "verifiedMovies": 118,
+  "verifiedSeries": 20,
+  "moviePosters": {
+    "total": 118,
+    "actualPosters": 117,
+    "fallbackPosters": 1,
+    "fallbackIds": [
+      "tt0320716"
+    ],
+    "checkedAt": "2026-10-30T02:39:34.787Z"
+  },
+  "seriesPosters": {
+    "total": 20,
+    "actualPosters": 20,
+    "fallbackPosters": 0,
+    "fallbackIds": [],
+    "checkedAt": "2026-10-30T02:39:40.212Z"
+  }
+}

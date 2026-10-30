@@ -1,0 +1,9 @@
+data/token.txt
+data/catalog.json.tmp
+.dev.vars
+node_modules/
+.wrangler/
+public/
+__pycache__/
+*.pyc
+data/series.json.tmp
