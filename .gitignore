@@ -7,3 +7,4 @@ public/
 __pycache__/
 *.pyc
 data/series.json.tmp
+data/series-details.json.tmp

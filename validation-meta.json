@@ -1,0 +1,16 @@
+{
+  "result": "PASS",
+  "version": "1.2.1",
+  "catalogsUnchanged": true,
+  "movies": 686,
+  "series": 155,
+  "seriesWithEpisodes": 155,
+  "episodeCount": 14143,
+  "missingEpisodeIds": [],
+  "metadataRoutesChecked": 841,
+  "jsonAndCorsVerified": true,
+  "hostedPostersVerified": true,
+  "stableImdbAndEpisodeIdsVerified": true,
+  "testsPassed": 31,
+  "checkedAt": "2026-11-01T03:20:50.235Z"
+}

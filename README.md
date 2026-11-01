@@ -1,6 +1,6 @@
 # Telugu Originals — Latest OTT
 
-A free, catalog-only Stremio add-on for Telugu original movies and Telugu original series / TV shows, combining public publisher listings with official ZEE5 and Aha metadata. This is an independent repository and add-on, adapted from the MIT-licensed `josemsd7/telugu-dub-catalog` project.
+A free catalog and metadata add-on for Stremio and Nuvio, covering Telugu original movies and Telugu original series / TV shows. It combines public publisher listings with official OTT metadata. This is an independent repository and add-on, adapted from the MIT-licensed `josemsd7/telugu-dub-catalog` project.
 
 ## Install
 
@@ -10,14 +10,14 @@ Manifest URL:
 https://josemsd7.github.io/telugu-original-catalog/manifest.json
 ```
 
-Open https://josemsd7.github.io/telugu-original-catalog/ and click **Install in Stremio**, or paste the manifest URL into Stremio's add-on search field.
+Open https://josemsd7.github.io/telugu-original-catalog/ and click **Install in Stremio**, or paste the manifest URL into Stremio's add-on search field. In Nuvio, add the same manifest URL as a Stremio-compatible add-on. After upgrading from a catalog-only version, remove and re-add this add-on once so Nuvio reloads its manifest and recognizes the new metadata resource. Playback still requires separate stream add-ons.
 
 | Catalog | Type / ID | Order |
 | --- | --- | --- |
 | Telugu Originals — Movies | `movie/telugu-original-movies` | Earliest reported Telugu OTT release date, newest first |
 | Telugu Originals — Series & TV | `series/telugu-original-series` | Original first-season premiere, newest first |
 
-The add-on has a distinct manifest ID (`org.josemsd7.telugu.original.catalog`). Movies and shows stay separate. Later seasons and episode updates do not promote an older series above a newly premiered show. One entry per IMDb ID; duplicate sources and platforms are merged. Static hosting supports browsing and pagination; dynamic search is not advertised. Stremio's Cinemeta supplies detailed metadata and episode lists for the IMDb IDs.
+The add-on has a distinct manifest ID (`org.josemsd7.telugu.original.catalog`). Movies and shows stay separate. Later seasons and episode updates do not promote an older series above a newly premiered show. One entry per IMDb ID; duplicate sources and platforms are merged. Static hosting supports browsing and pagination; dynamic search is not advertised. The add-on serves its own `/meta/movie/{IMDb ID}.json` and `/meta/series/{IMDb ID}.json` responses, so clients such as Nuvio can open title details without a separate metadata add-on. The manifest declares the `meta` resource with the stable `tt` IMDb prefix, so future catalog additions work without reinstalling. Metadata is served for titles included in these catalogs; it is not a general replacement for other metadata add-ons. Movie facts use the verified identity cache; series episode lists use public Cinemeta metadata, refreshed every six hours and cached in `data/series-details.json`. Both Cinemeta episode schemas (`episode`/`released` and `number`/`firstAired`) are supported. Episode IDs remain `tt…:season:episode` for other stream add-ons. Missing episode lists remain empty rather than inventing episodes, and temporary source failures retain previous successful lists. [Metadata coverage status](https://josemsd7.github.io/telugu-original-catalog/meta/status.json) reports these gaps.
 
 ## Language and release rules
 

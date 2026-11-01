@@ -5,7 +5,7 @@ export {VERSION,LANGUAGES,normalize,jsonFetch,parallelMap,wikiQuery,wikiRecords,
 export {refreshFromOtt as refresh} from './source-refresh.mjs';
 export const MOVIE_ID='telugu-original-movies';
 export function manifest(){
-  return {id:'org.josemsd7.telugu.original.catalog',version:VERSION,name:'Telugu Originals — Latest OTT',description:'Two catalogs for confirmed Telugu original movies and Telugu original series/TV shows. Movies sort by earliest reported OTT release; series sort by first-season premiere, newest first. India release dates. Catalog only.',resources:['catalog'],types:['movie','series'],catalogs:[{type:'movie',id:MOVIE_ID,name:'Telugu Originals — Movies',extra:[{name:'skip'}]},{type:'series',id:SERIES_ID,name:'Telugu Originals — Series & TV',extra:[{name:'skip'}]}],behaviorHints:{configurable:false}};
+  return {id:'org.josemsd7.telugu.original.catalog',version:VERSION,name:'Telugu Originals — Latest OTT',description:'Two catalogs for confirmed Telugu original movies and Telugu original series/TV shows. Movies sort by earliest reported OTT release; series sort by first-season premiere, newest first. India release dates. Includes title metadata for Nuvio and Stremio; playback uses separate add-ons.',resources:['catalog',{name:'meta',types:['movie','series'],idPrefixes:['tt']}],types:['movie','series'],catalogs:[{type:'movie',id:MOVIE_ID,name:'Telugu Originals — Movies',extra:[{name:'skip'}]},{type:'series',id:SERIES_ID,name:'Telugu Originals — Series & TV',extra:[{name:'skip'}]}],behaviorHints:{configurable:false}};
 }
 export function catalog(data,extra=''){
   if(extra.length>2000)throw new Error('Invalid parameters');
