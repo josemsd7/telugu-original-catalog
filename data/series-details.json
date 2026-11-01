@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-01T03:32:48.345Z",
+  "checkedAt": "2026-11-01T07:29:28.314Z",
   "entries": {
     "tt49873734": {
       "schemaVersion": 1,
@@ -5242,6 +5242,187 @@
       "background": "https://live.metahub.space/background/medium/tt26915205/img",
       "logo": "https://live.metahub.space/logo/medium/tt26915205/img",
       "imdbRating": "3.5",
+      "runtime": ""
+    },
+    "tt27412343": {
+      "schemaVersion": 1,
+      "id": "tt27412343",
+      "type": "series",
+      "checkedAt": "2026-11-01T03:32:48.345Z",
+      "sourceUrl": "https://v3-cinemeta.strem.io/meta/series/tt27412343.json",
+      "state": "ok",
+      "videos": [
+        {
+          "id": "tt27412343:1:1",
+          "title": "Mother's Day",
+          "season": 1,
+          "episode": 1,
+          "released": "2023-04-27T00:00:00.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/1/1/w780.jpg"
+        },
+        {
+          "id": "tt27412343:1:2",
+          "title": "Tiger Meet",
+          "season": 1,
+          "episode": 2,
+          "released": "2023-04-27T00:00:01.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/1/2/w780.jpg"
+        },
+        {
+          "id": "tt27412343:1:3",
+          "title": "Tigers on TV",
+          "season": 1,
+          "episode": 3,
+          "released": "2023-04-27T00:00:02.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/1/3/w780.jpg"
+        },
+        {
+          "id": "tt27412343:1:4",
+          "title": "Dikky Dikky",
+          "season": 1,
+          "episode": 4,
+          "released": "2023-04-27T00:00:03.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/1/4/w780.jpg"
+        },
+        {
+          "id": "tt27412343:1:5",
+          "title": "No Pain No Gain",
+          "season": 1,
+          "episode": 5,
+          "released": "2023-04-27T00:00:04.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/1/5/w780.jpg"
+        },
+        {
+          "id": "tt27412343:1:6",
+          "title": "Rise of the Tigers",
+          "season": 1,
+          "episode": 6,
+          "released": "2023-04-27T00:00:05.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/1/6/w780.jpg"
+        },
+        {
+          "id": "tt27412343:2:1",
+          "title": "Where is Hamsalekha?",
+          "season": 2,
+          "episode": 1,
+          "released": "2024-03-15T00:00:00.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/2/1/w780.jpg"
+        },
+        {
+          "id": "tt27412343:2:2",
+          "title": "7 year itch",
+          "season": 2,
+          "episode": 2,
+          "released": "2024-03-15T00:00:01.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/2/2/w780.jpg"
+        },
+        {
+          "id": "tt27412343:2:3",
+          "title": "Hail Women Power",
+          "season": 2,
+          "episode": 3,
+          "released": "2024-03-15T00:00:02.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/2/3/w780.jpg"
+        },
+        {
+          "id": "tt27412343:2:4",
+          "title": "10000 BC",
+          "season": 2,
+          "episode": 4,
+          "released": "2024-03-15T00:00:03.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/2/4/w780.jpg"
+        },
+        {
+          "id": "tt27412343:2:5",
+          "title": "Pets and Owners",
+          "season": 2,
+          "episode": 5,
+          "released": "2024-03-15T00:00:04.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/2/5/w780.jpg"
+        },
+        {
+          "id": "tt27412343:2:6",
+          "title": "Family Celebration",
+          "season": 2,
+          "episode": 6,
+          "released": "2024-03-15T00:00:05.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/2/6/w780.jpg"
+        },
+        {
+          "id": "tt27412343:2:7",
+          "title": "Fall of Tigers",
+          "season": 2,
+          "episode": 7,
+          "released": "2024-03-15T00:00:06.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/2/7/w780.jpg"
+        },
+        {
+          "id": "tt27412343:3:1",
+          "title": "Marriages Are Made In Heaven",
+          "season": 3,
+          "episode": 1,
+          "released": "2026-06-19T00:00:00.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/3/1/w780.jpg"
+        },
+        {
+          "id": "tt27412343:3:2",
+          "title": "Neech Kameen Kuttey",
+          "season": 3,
+          "episode": 2,
+          "released": "2026-06-19T00:00:01.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/3/2/w780.jpg"
+        },
+        {
+          "id": "tt27412343:3:3",
+          "title": "Ulta Palta",
+          "season": 3,
+          "episode": 3,
+          "released": "2026-06-19T00:00:02.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/3/3/w780.jpg"
+        },
+        {
+          "id": "tt27412343:3:4",
+          "title": "Same Same But Different",
+          "season": 3,
+          "episode": 4,
+          "released": "2026-06-19T00:00:03.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/3/4/w780.jpg"
+        },
+        {
+          "id": "tt27412343:3:5",
+          "title": "Free Hit",
+          "season": 3,
+          "episode": 5,
+          "released": "2026-06-19T00:00:04.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/3/5/w780.jpg"
+        },
+        {
+          "id": "tt27412343:3:6",
+          "title": "Deal Breaker",
+          "season": 3,
+          "episode": 6,
+          "released": "2026-06-19T00:00:05.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/3/6/w780.jpg"
+        },
+        {
+          "id": "tt27412343:3:7",
+          "title": "Clash Of Tigers",
+          "season": 3,
+          "episode": 7,
+          "released": "2026-06-19T00:00:06.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt27412343/3/7/w780.jpg"
+        }
+      ],
+      "cast": [
+        "Chaitanya Krishna",
+        "Priyadarshi Pullikonda",
+        "Abhinav Gomatam"
+      ],
+      "director": [],
+      "releaseInfo": "2023–",
+      "background": "https://live.metahub.space/background/medium/tt27412343/img",
+      "logo": "https://live.metahub.space/logo/medium/tt27412343/img",
+      "imdbRating": "7.9",
       "runtime": ""
     },
     "tt14783936": {
@@ -98933,186 +99114,54 @@
       "imdbRating": "",
       "runtime": ""
     },
-    "tt27412343": {
+    "tt13878800": {
       "schemaVersion": 1,
-      "id": "tt27412343",
+      "id": "tt13878800",
       "type": "series",
-      "checkedAt": "2026-11-01T03:32:48.345Z",
-      "sourceUrl": "https://v3-cinemeta.strem.io/meta/series/tt27412343.json",
+      "checkedAt": "2026-11-01T07:29:28.314Z",
+      "sourceUrl": "https://v3-cinemeta.strem.io/meta/series/tt13878800.json",
       "state": "ok",
       "videos": [
         {
-          "id": "tt27412343:1:1",
-          "title": "Mother's Day",
+          "id": "tt13878800:1:1",
+          "title": "Ramula",
           "season": 1,
           "episode": 1,
-          "released": "2023-04-27T00:00:00.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/1/1/w780.jpg"
+          "released": "2021-02-19T00:00:00.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt13878800/1/1/w780.jpg"
         },
         {
-          "id": "tt27412343:1:2",
-          "title": "Tiger Meet",
+          "id": "tt13878800:1:2",
+          "title": "Meera",
           "season": 1,
           "episode": 2,
-          "released": "2023-04-27T00:00:01.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/1/2/w780.jpg"
+          "released": "2021-02-19T00:00:01.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt13878800/1/2/w780.jpg"
         },
         {
-          "id": "tt27412343:1:3",
-          "title": "Tigers on TV",
+          "id": "tt13878800:1:3",
+          "title": "xLife",
           "season": 1,
           "episode": 3,
-          "released": "2023-04-27T00:00:02.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/1/3/w780.jpg"
+          "released": "2021-02-19T00:00:02.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt13878800/1/3/w780.jpg"
         },
         {
-          "id": "tt27412343:1:4",
-          "title": "Dikky Dikky",
+          "id": "tt13878800:1:4",
+          "title": "Pinky",
           "season": 1,
           "episode": 4,
-          "released": "2023-04-27T00:00:03.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/1/4/w780.jpg"
-        },
-        {
-          "id": "tt27412343:1:5",
-          "title": "No Pain No Gain",
-          "season": 1,
-          "episode": 5,
-          "released": "2023-04-27T00:00:04.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/1/5/w780.jpg"
-        },
-        {
-          "id": "tt27412343:1:6",
-          "title": "Rise of the Tigers",
-          "season": 1,
-          "episode": 6,
-          "released": "2023-04-27T00:00:05.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/1/6/w780.jpg"
-        },
-        {
-          "id": "tt27412343:2:1",
-          "title": "Where is Hamsalekha?",
-          "season": 2,
-          "episode": 1,
-          "released": "2024-03-15T00:00:00.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/2/1/w780.jpg"
-        },
-        {
-          "id": "tt27412343:2:2",
-          "title": "7 year itch",
-          "season": 2,
-          "episode": 2,
-          "released": "2024-03-15T00:00:01.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/2/2/w780.jpg"
-        },
-        {
-          "id": "tt27412343:2:3",
-          "title": "Hail Women Power",
-          "season": 2,
-          "episode": 3,
-          "released": "2024-03-15T00:00:02.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/2/3/w780.jpg"
-        },
-        {
-          "id": "tt27412343:2:4",
-          "title": "10000 BC",
-          "season": 2,
-          "episode": 4,
-          "released": "2024-03-15T00:00:03.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/2/4/w780.jpg"
-        },
-        {
-          "id": "tt27412343:2:5",
-          "title": "Pets and Owners",
-          "season": 2,
-          "episode": 5,
-          "released": "2024-03-15T00:00:04.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/2/5/w780.jpg"
-        },
-        {
-          "id": "tt27412343:2:6",
-          "title": "Family Celebration",
-          "season": 2,
-          "episode": 6,
-          "released": "2024-03-15T00:00:05.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/2/6/w780.jpg"
-        },
-        {
-          "id": "tt27412343:2:7",
-          "title": "Fall of Tigers",
-          "season": 2,
-          "episode": 7,
-          "released": "2024-03-15T00:00:06.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/2/7/w780.jpg"
-        },
-        {
-          "id": "tt27412343:3:1",
-          "title": "Marriages Are Made In Heaven",
-          "season": 3,
-          "episode": 1,
-          "released": "2026-06-19T00:00:00.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/3/1/w780.jpg"
-        },
-        {
-          "id": "tt27412343:3:2",
-          "title": "Neech Kameen Kuttey",
-          "season": 3,
-          "episode": 2,
-          "released": "2026-06-19T00:00:01.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/3/2/w780.jpg"
-        },
-        {
-          "id": "tt27412343:3:3",
-          "title": "Ulta Palta",
-          "season": 3,
-          "episode": 3,
-          "released": "2026-06-19T00:00:02.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/3/3/w780.jpg"
-        },
-        {
-          "id": "tt27412343:3:4",
-          "title": "Same Same But Different",
-          "season": 3,
-          "episode": 4,
-          "released": "2026-06-19T00:00:03.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/3/4/w780.jpg"
-        },
-        {
-          "id": "tt27412343:3:5",
-          "title": "Free Hit",
-          "season": 3,
-          "episode": 5,
-          "released": "2026-06-19T00:00:04.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/3/5/w780.jpg"
-        },
-        {
-          "id": "tt27412343:3:6",
-          "title": "Deal Breaker",
-          "season": 3,
-          "episode": 6,
-          "released": "2026-06-19T00:00:05.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/3/6/w780.jpg"
-        },
-        {
-          "id": "tt27412343:3:7",
-          "title": "Clash Of Tigers",
-          "season": 3,
-          "episode": 7,
-          "released": "2026-06-19T00:00:06.000Z",
-          "thumbnail": "https://episodes.metahub.space/tt27412343/3/7/w780.jpg"
+          "released": "2021-02-19T00:00:03.000Z",
+          "thumbnail": "https://episodes.metahub.space/tt13878800/1/4/w780.jpg"
         }
       ],
-      "cast": [
-        "Chaitanya Krishna",
-        "Priyadarshi Pullikonda",
-        "Abhinav Gomatam"
-      ],
+      "cast": [],
       "director": [],
-      "releaseInfo": "2023–",
-      "background": "https://live.metahub.space/background/medium/tt27412343/img",
-      "logo": "https://live.metahub.space/logo/medium/tt27412343/img",
-      "imdbRating": "7.9",
-      "runtime": ""
+      "releaseInfo": "2021–2021",
+      "background": "https://live.metahub.space/background/medium/tt13878800/img",
+      "logo": "https://live.metahub.space/logo/medium/tt13878800/img",
+      "imdbRating": "5.2",
+      "runtime": "38 min"
     }
   },
   "warnings": []
